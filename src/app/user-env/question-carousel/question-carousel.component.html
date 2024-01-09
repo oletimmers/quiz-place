@@ -1,0 +1,17 @@
+<div class="progressbar">
+  <mat-progress-bar mode="determinate" value="{{process}}"></mat-progress-bar>
+</div>
+<ngb-carousel
+  #carousel [interval]="0"
+  [wrap]="false"
+  [showNavigationArrows]="false"
+  [showNavigationIndicators]="false"
+  *ngIf="process < 100">
+  <ng-template ngbSlide *ngFor="let question of questions; let i = index">
+    <app-question (result)="processResult($event)"  [question]="question"></app-question>
+  </ng-template>
+</ngb-carousel>
+<div *ngIf="process == 100" class="done">
+  <h2>Cool, you're done!</h2>
+  <h3>Reload the page to do this or another quiz again.</h3>
+</div>

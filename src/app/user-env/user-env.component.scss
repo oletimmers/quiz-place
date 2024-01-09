@@ -1,0 +1,23 @@
+.courses-to-choose-from {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  .card-wrapper {
+    width: 180px;
+    height: 120px;
+    mat-card {
+      cursor: pointer;
+      height: 100%;
+      width: 100%;
+      justify-content: center;
+      mat-card-content {
+        text-align: center;
+      }
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}

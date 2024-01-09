@@ -1,0 +1,36 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-subtitle>{{getSubTitle()}}</mat-card-subtitle>
+    <mat-card-title>{{question.questionText}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <img *ngIf="question.image != null" mat-card-image src="{{question.image}}" alt="related image">
+    <mat-radio-group *ngIf="!question.hasMultipleCorrectAnswers()" aria-label="Select an option" [(ngModel)]="selectedAnswer">
+      <mat-radio-button [disabled]="submitted" class="answer" *ngFor="let answer of question.answers" [value]="answer.text">
+        {{ answer.text }}
+        <span *ngIf="submitted && answer.isCorrect">&#9989;</span>
+        <span *ngIf="submitted && !answer.isCorrect">&#10060;</span>
+      </mat-radio-button>
+    </mat-radio-group>
+    <div *ngIf="question.hasMultipleCorrectAnswers()" class="multiple-choice">
+      <mat-checkbox
+        [disabled]="submitted"
+        class="answer"
+        *ngFor="let answer of question.answers"
+        [(ngModel)]="answer.selected">
+        {{ answer.text }}
+        <span *ngIf="submitted && answer.isCorrect">&#9989;</span>
+        <span *ngIf="submitted && !answer.isCorrect">&#10060;</span>
+      </mat-checkbox>
+    </div>
+    <div *ngIf="submitted">
+      <p *ngIf="goodAnswer">Good answer!</p>
+      <p *ngIf="!goodAnswer">Not the right answer, try again in a minute.</p>
+    </div>
+    <mat-divider></mat-divider>
+  </mat-card-content>
+  <mat-card-actions>
+    <button [disabled]="submitted" mat-button (click)="submit()">Submit answer</button>
+    <button [disabled]="!submitted" mat-button (click)="nextSlide()">Next question</button>
+  </mat-card-actions>
+</mat-card>

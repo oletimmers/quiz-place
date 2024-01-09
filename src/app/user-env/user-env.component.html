@@ -1,0 +1,16 @@
+<div *ngIf="selectedCourse == null" class="no-course-selected">
+  <p>You have not chosen a course you want to test yourself with.</p>
+  <p>Choose a course down below here.</p>
+  <div class="courses-to-choose-from">
+    <div class="card-wrapper" *ngFor="let course of getCourses()">
+      <mat-card  (click)="selectThisCourse(course)" style="background-color: {{course.colorCode}};">
+        <mat-card-content>{{course.title}}</mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+<div *ngIf="selectedCourse != null" class="course-selected">
+  <p>Selected course: {{selectedCourse.title}}</p>
+  <app-question-carousel [course]="selectedCourse" ></app-question-carousel>
+</div>
+
