@@ -51,3 +51,7 @@ def get_user(id):
         return make_response(jsonify({'message': 'user not found'}), 404)
     except Exception as e:
         return make_response(jsonify({'message': 'error getting user'}), 500)
+
+@app.route('/test2', methods=['GET'])
+def test2():
+    return make_response(jsonify({'message': 'testing route'}), 200)
