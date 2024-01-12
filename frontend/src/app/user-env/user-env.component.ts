@@ -27,4 +27,6 @@ export class UserEnvComponent {
     this.selectedCourse = course;
     console.log("yes")
   }
+
+  public reset() { this.selectedCourse = null; }
 }

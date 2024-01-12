@@ -5,6 +5,7 @@ import {ShuffleMachine} from "../../services/ShuffleMachine";
 import {Database} from "../../staticdatabase";
 import {Result} from "../../models/result";
 import {NgbCarousel} from "@ng-bootstrap/ng-bootstrap";
+import {UserEnvComponent} from "../user-env.component";
 
 @Component({
   selector: 'app-question-carousel',
@@ -13,6 +14,8 @@ import {NgbCarousel} from "@ng-bootstrap/ng-bootstrap";
 })
 export class QuestionCarouselComponent {
   @Input() course: Course = new Course("", null, null);
+
+  constructor(private user: UserEnvComponent) {}
 
   ngOnChanges() {
     console.log('Input course in app-question-carousel:', this.course);
@@ -53,5 +56,10 @@ export class QuestionCarouselComponent {
   updateProcess() {
     this.process = this.currentSlide / this.questions.length * 100;
     console.log("Process: " + this.process + "\n " + this.currentSlide + "\n " + this.questions.length)
+  }
+
+  return() {
+    console.log("fix that we can go back");
+    this.user.reset();
   }
 }
