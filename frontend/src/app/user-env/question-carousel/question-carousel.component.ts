@@ -14,25 +14,20 @@ import {NgbCarousel} from "@ng-bootstrap/ng-bootstrap";
 export class QuestionCarouselComponent {
   @Input() course: Course = new Course("", null, null);
 
+  ngOnChanges() {
+    console.log('Input course in app-question-carousel:', this.course);
+    if (this.course.questions != null) {
+      this.questions = this.getQuestions();
+      console.log("Questions loaded!")
+    }
+  }
+
   process = 0;
   questions: Question[] = [];
   currentSlide: number = 1;
 
   // @ts-ignore
   @ViewChild('carousel') carousel: NgbCarousel;
-
-  // @ts-ignore
-  // ngOnChanges(changes: SimpleChanges) {
-  //   this.course = changes['course'].;
-  // }
-
-  constructor() {
-    console.log("questions loaded!")
-    console.log(this.course);
-    if (this.course.questions != null) {
-      this.questions = this.getQuestions();
-    }
-  }
 
   getQuestions() {
     let tempQuestions = ShuffleMachine.shuffleArray(Database.questionList);
