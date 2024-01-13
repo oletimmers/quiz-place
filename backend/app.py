@@ -2,15 +2,18 @@ from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
 from flask_cors import CORS, cross_origin
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 class User(db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     role = db.Column(db.String(20), nullable=False)
@@ -19,6 +22,7 @@ class User(db.Model):
         return {'id': self.id,'username': self.username, 'role': self.role}
 
 class Question(db.Model):
+    __tablename__ = 'question'
     id = db.Column(db.Integer, primary_key=True)
     course = db.Column(db.Text, nullable=False)
     question = db.Column(db.Text, nullable=False)
@@ -27,11 +31,44 @@ class Question(db.Model):
     answer3 = db.Column(db.Text, nullable=False)
     answer4 = db.Column(db.Text, nullable=False)
 
+class Answer(db.Model):
+    __tablename__ = 'answer'
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), primary_key=True)
+    # 1 means answer is correct, 0 means answer is wrong
+    answer1 = db.Column(db.Integer, nullable=False)
+    answer2 = db.Column(db.Integer, nullable=False)
+    answer3 = db.Column(db.Integer, nullable=False)
+    answer4 = db.Column(db.Integer, nullable=False)
+    question = db.relationship('Question', backref='answer', lazy=True, uselist=False)
+
+    def json(self):
+        return {'question_id': self.question_id, 'answer1': self.answer1, 'answer2': self.answer2, 'answer3': self.answer3, 'answer4': self.answer4}
 db.create_all()
 
 @app.route('/test', methods=['GET'])
 def test():
     return make_response(jsonify({'message': 'test route'}), 200)
+
+@app.route('/create-answer', methods=['POST'])
+def create_answer():
+    try:
+        data = request.get_json()
+        new_answer = Answer(question_id=data['question_id'], answer1=data['answer1'], answer2=data['answer2'], answer3=data['answer3'], answer4=data['answer4'])
+        db.session.add(new_answer)
+        db.session.commit()
+        return make_response(jsonify({'message': f'question created, id: {new_answer.question_id}'}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': f'error creating answer: {e}'}), 500)
+
+@app.route('/get-answer/<int:question_id>')
+def get_answer(question_id):
+    try:
+        answer = Answer.query.filter_by(question_id=question_id).first()
+        if answer:
+            return make_response(jsonify({'answer': answer.json()}), 200)
+        return make_response(jsonify({'message': 'answer not found'}), 404)
+    except Exception as e:
+        return make_response(jsonify({'message': f'error getting answer: {e}'}), 500)
 
 @app.route('/create-question', methods=['POST'])
 def create_question():
@@ -40,7 +77,7 @@ def create_question():
         new_question = Question(course=data['course'], question=data['question'], answer1=data['answer1'], answer2=data['answer2'], answer3=data['answer3'], answer4=data['answer4'])
         db.session.add(new_question)
         db.session.commit()
-        return make_response(jsonify({'message': 'question created'}), 201)
+        return make_response(jsonify({'message': f'question created, id: {new_question.id}'}), 201)
     except Exception as e:
         return make_response(jsonify({'message': f'error creating question: {e}'}), 500)
 
@@ -97,3 +134,15 @@ def get_user(id):
         return make_response(jsonify({'message': 'user not found'}), 404)
     except Exception as e:
         return make_response(jsonify({'message': 'error getting user'}), 500)
+
+# CODE TO DROP TABLES
+# # Reflect the existing database tables
+# db.metadata.reflect(bind=db.engine)
+
+# # Drop the table if it exists
+# if 'users' in db.metadata.tables:
+#     obsolete_table = db.metadata.tables['users']
+#     obsolete_table.drop(db.engine)
+
+# # Commit the changes
+# db.session.commit()
