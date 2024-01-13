@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Course} from "../models/course";
 import {Database} from "../staticdatabase";
+import {InformationService} from "../services/information.service";
 
 @Component({
   selector: 'app-user-env',
@@ -8,6 +9,8 @@ import {Database} from "../staticdatabase";
   styleUrls: ['./user-env.component.scss']
 })
 export class UserEnvComponent {
+  constructor(private informationService:InformationService) {}
+
   ngOnInit(): void {
   }
   selectedCourse: Course | null = null;
@@ -24,6 +27,19 @@ export class UserEnvComponent {
   }
 
   public selectThisCourse(course: Course) {
+    // THESE ARE JUST FOR TESTING, WE CAN DELETE THESE
+    // this.informationService.createQuestion(null).subscribe( {
+    //   next: () => {
+    //     console.log("successful question creation");
+    //   }
+    // });
+
+    // this.informationService.getCourseQuestions("FAS").subscribe({
+    //   next: (data) => {
+    //     console.log(data);
+    //   }
+    // });
+    
     this.selectedCourse = course;
     console.log("yes")
   }
