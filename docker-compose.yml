@@ -4,7 +4,8 @@ services:
   quiz_app:
     container_name: quiz_app
     image: efebeydogan01/quiz_app:1.0.0
-    build: .
+    build:
+      context: ./backend
     ports:
       - "4000:4000"
     environment:
@@ -13,7 +14,7 @@ services:
     depends_on:
       - flask_db
     volumes:
-      - "./:/backend"
+      - "./backend:/backend"
   
   flask_db:
     container_name: flask_db

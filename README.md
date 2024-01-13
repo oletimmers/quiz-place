@@ -1,7 +1,7 @@
 ## Follow these steps to run the app
 1) docker compose build
 2) docker compose up -d
-3) to see the logs: docker compose logs -f
+3) to see the logs: docker compose logs -f OR docker compose logs CONTAINER_NAME -f (for example: docker compose logs quiz_app -f)
 
 ### To visualize the database:
 1) download TablePlus: https://tableplus.com/download
