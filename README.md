@@ -1,10 +1,10 @@
 ## Follow these steps to run the app
-BEFORE YOU BUILD THE IMAGES:
-open your command prompt and issue the command "hostname -I"
-from there, copy the first IP address in the output
-go to frontend/src/environments
-inside this directory there are two files, in each of them replace API_BASE_URL with "http://the-ip-address:4000" (for example: http://192.168.0.104:4000)
-I unfortunately couldn't find a workaround to this that would allow us to skip this procedure
+BEFORE YOU BUILD THE IMAGES:  
+open your command prompt and issue the command "hostname -I"  
+from there, copy the first IP address in the output  
+go to frontend/src/environments  
+inside this directory there are two files, in each of them replace API_BASE_URL with "http://the-ip-address:4000" (for example: http://192.168.0.104:4000)  
+I unfortunately couldn't find a workaround to this that would allow us to skip this procedure  
 
 1) docker compose build
 2) docker compose up -d
