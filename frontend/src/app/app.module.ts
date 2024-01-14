@@ -16,6 +16,13 @@ import {FormsModule} from "@angular/forms";
 import {MatDividerModule} from "@angular/material/divider";
 import {MatButtonModule} from "@angular/material/button";
 import {HttpClientModule} from "@angular/common/http";
+import { LoginDialogComponent } from './login-dialog/login-dialog.component';
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatIconModule} from "@angular/material/icon";
+import {MatInputModule} from "@angular/material/input";
+import {authInterceptorProviders} from "./services/auth-interceptor.service";
+import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -23,7 +30,8 @@ import {HttpClientModule} from "@angular/common/http";
     UserEnvComponent,
     AdminEnvComponent,
     QuestionComponent,
-    QuestionCarouselComponent
+    QuestionCarouselComponent,
+    LoginDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -36,9 +44,17 @@ import {HttpClientModule} from "@angular/common/http";
     FormsModule,
     MatDividerModule,
     MatButtonModule,
-    HttpClientModule
+    HttpClientModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatSnackBarModule,
   ],
-  providers: [],
+  providers: [
+    authInterceptorProviders,
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000}}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

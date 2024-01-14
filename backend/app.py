@@ -3,6 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from os import environ
 from flask_cors import CORS, cross_origin
 from flask_migrate import Migrate
+import datetime
+import jwt
+from functools import wraps
+import sys
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
@@ -11,6 +15,9 @@ migrate = Migrate(app, db)
 
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+app.config['SECRET_KEY']='ilovesofwarecontainerization'
+adminpw = "superadmin"
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -45,11 +52,53 @@ class Answer(db.Model):
         return {'question_id': self.question_id, 'answer1': self.answer1, 'answer2': self.answer2, 'answer3': self.answer3, 'answer4': self.answer4}
 db.create_all()
 
+
+def token_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        token = None
+        if 'x-access-tokens' in request.headers:
+            token = request.headers['x-access-tokens']
+
+        if not token:
+            return jsonify({'message': 'a valid token is missing'})
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = User.query.filter_by(id=data['id']).first()
+        except:
+            return jsonify({'message': 'token is invalid'})
+
+        return f(current_user, *args, **kwargs)
+
+    return decorator
+
+
 @app.route('/test', methods=['GET'])
 def test():
     return make_response(jsonify({'message': 'test route'}), 200)
 
+
+@app.route('/login', methods=['POST'])
+def login_user():
+    auth = request.get_json()
+
+    if not auth or not auth.get('username') or not auth.get('password'):
+        return make_response('Credits not in right format', 400, {'Authentication': 'login required"'})
+
+    user = User.query.filter_by(username=auth["username"]).first()
+    # TOTALLY NOT SAFE
+    if user and auth["password"] == adminpw:
+        token = jwt.encode(
+            {'id': user.id, 'role': user.role, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=500)},
+            app.config['SECRET_KEY'], "HS256")
+
+        return jsonify({'token': token})
+
+    return make_response('Could not verify', 401, {'Authentication': '"login required"'})
+
+
 @app.route('/create-answer', methods=['POST'])
+@token_required
 def create_answer():
     try:
         data = request.get_json()
@@ -59,6 +108,7 @@ def create_answer():
         return make_response(jsonify({'message': f'answer created, id: {new_answer.question_id}'}), 201)
     except Exception as e:
         return make_response(jsonify({'message': f'error creating answer: {e}'}), 500)
+
 
 @app.route('/get-answer/<int:question_id>')
 def get_answer(question_id):
@@ -70,6 +120,7 @@ def get_answer(question_id):
     except Exception as e:
         return make_response(jsonify({'message': f'error getting answer: {e}'}), 500)
 
+
 @app.route('/create-question', methods=['POST'])
 def create_question():
     try:
@@ -80,6 +131,7 @@ def create_question():
         return make_response(jsonify({'message': f'question created, id: {new_question.id}'}), 201)
     except Exception as e:
         return make_response(jsonify({'message': f'error creating question: {e}'}), 500)
+
 
 @app.route('/get-course-questions/<course>', methods=['GET'])
 def get_course_questions(course):
@@ -103,6 +155,7 @@ def get_course_questions(course):
     except Exception as e:
         return make_response(jsonify({'message': f'error getting questions: {e}'}), 500)
 
+
 # create a user
 @app.route('/create-user', methods=['POST'])
 def create_user():
@@ -115,6 +168,7 @@ def create_user():
     except Exception as e:
         return make_response(jsonify({'message': 'error creating user'}), 500)
 
+
 # get all users
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -123,6 +177,7 @@ def get_users():
         return make_response(jsonify([user.json() for user in users]), 200)
     except Exception as e:
         return make_response(jsonify({'message': 'error getting users'}), 500)
+
 
 # get a user by id
 @app.route('/users/<int:id>', methods=['GET'])

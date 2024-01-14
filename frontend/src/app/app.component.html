@@ -1,6 +1,12 @@
 <header><h1>Quiz Place :-)</h1></header>
 <main>
   <app-admin-env *ngIf="isAdmin"></app-admin-env>
+  <div class="logout-place" *ngIf="isAdmin">
+    <button (click)="logOut()" mat-flat-button color="accent" >Logout</button>
+  </div>
   <app-user-env *ngIf="!isAdmin"></app-user-env>
+  <div class="login-place" *ngIf="!isAdmin">
+    <button (click)="openLoginDialog()" mat-flat-button color="accent" >Login</button>
+  </div>
 </main>
 <footer>Vrije Universiteit Amsterdam &mdash; Software Containerization &mdash; Group 31  &mdash; 2024</footer>

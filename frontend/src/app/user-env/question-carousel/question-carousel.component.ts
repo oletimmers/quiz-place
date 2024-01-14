@@ -6,7 +6,6 @@ import {Database} from "../../staticdatabase";
 import {Result} from "../../models/result";
 import {NgbCarousel} from "@ng-bootstrap/ng-bootstrap";
 import {UserEnvComponent} from "../user-env.component";
-import axios from 'axios';
 
 @Component({
   selector: 'app-question-carousel',

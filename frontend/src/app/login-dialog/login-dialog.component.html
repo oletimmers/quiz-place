@@ -1,0 +1,25 @@
+<h1 mat-dialog-title>Login</h1>
+<div mat-dialog-content>
+  <p>Please fill in your username and password down below.</p>
+  <p>
+    <mat-form-field appearance="fill">
+    <mat-label>Username</mat-label>
+    <input [(ngModel)]='loginCreds.username' required matInput placeholder="johnappleseed">
+    <mat-icon matSuffix>alternate_email</mat-icon>
+  </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field>
+      <mat-label>Enter your password</mat-label>
+      <input [(ngModel)]='loginCreds.password' matInput [type]="hide ? 'password' : 'text'">
+      <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+    </mat-form-field>
+  </p>
+
+</div>
+<div mat-dialog-actions>
+  <button (click)="close()" mat-flat-button mat-dialog-close color="accent">Cancel</button>
+  <button [disabled]="" (click)="submit()" mat-flat-button [mat-dialog-close]="loginCreds" color="primary">Login</button>
+</div>
