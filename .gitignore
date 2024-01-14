@@ -36,6 +36,7 @@ yarn-error.log
 /frontend/libpeerconnection.log
 /frontend/testem.log
 /frontend/typings
+/frontend/dist
 
 /frontend/node_modules
 # System files

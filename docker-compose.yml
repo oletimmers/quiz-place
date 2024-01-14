@@ -1,6 +1,23 @@
 version: "3.9"
 
 services:
+  frontend:
+    container_name: quiz_app_frontend
+    image: quiz_app_frontend:v1
+    build:
+      context: ./frontend
+    ports:
+      - 80:80
+    expose:
+      - 80
+    depends_on:
+      - quiz_app
+    volumes:
+      - "./frontend:/frontend"
+      - /frontend/node_modules
+    networks:
+      - internalnet
+
   quiz_app:
     container_name: quiz_app
     image: efebeydogan01/quiz_app:1.0.0
@@ -15,6 +32,8 @@ services:
       - flask_db
     volumes:
       - "./backend:/backend"
+    networks:
+      - internalnet
   
   flask_db:
     container_name: flask_db
@@ -27,6 +46,12 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - internalnet
 
 volumes:
   pgdata: {}
+
+networks:
+  internalnet:
+    driver: bridge

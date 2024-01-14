@@ -3,13 +3,14 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import {  throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InformationService {
 
-  private baseURL = "http://localhost:4000";
+  private baseURL = environment.API_BASE_URL;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -54,7 +55,7 @@ export class InformationService {
     
     return this.httpClient
             .get<any>(this.baseURL + '/get-course-questions/' + courseName).pipe(
-              catchError(this.handleError)
+              catchError(this.handleError) 
             );
   }
 }

@@ -34,14 +34,14 @@ export class UserEnvComponent {
     //   }
     // });
 
-    // this.informationService.getCourseQuestions("FAS").subscribe({
-    //   next: (data) => {
-    //     console.log(data);
-    //   }
-    // });
+    this.informationService.getCourseQuestions("FAS").subscribe({
+      next: (data) => {
+        console.log(data);
+      }
+    });
     
     this.selectedCourse = course;
-    console.log("yes")
+    console.log("YES");
   }
 
   public reset() { this.selectedCourse = null; }

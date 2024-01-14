@@ -56,7 +56,7 @@ def create_answer():
         new_answer = Answer(question_id=data['question_id'], answer1=data['answer1'], answer2=data['answer2'], answer3=data['answer3'], answer4=data['answer4'])
         db.session.add(new_answer)
         db.session.commit()
-        return make_response(jsonify({'message': f'question created, id: {new_answer.question_id}'}), 201)
+        return make_response(jsonify({'message': f'answer created, id: {new_answer.question_id}'}), 201)
     except Exception as e:
         return make_response(jsonify({'message': f'error creating answer: {e}'}), 500)
 
