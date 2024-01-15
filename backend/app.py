@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from flask_migrate import Migrate
 import datetime
 import jwt
@@ -16,8 +16,9 @@ migrate = Migrate(app, db)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-app.config['SECRET_KEY']='ilovesofwarecontainerization'
+app.config['SECRET_KEY'] = 'ilovesofwarecontainerization'
 adminpw = "superadmin"
+
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -26,7 +27,8 @@ class User(db.Model):
     role = db.Column(db.String(20), nullable=False)
 
     def json(self):
-        return {'id': self.id,'username': self.username, 'role': self.role}
+        return {'id': self.id, 'username': self.username, 'role': self.role}
+
 
 class Question(db.Model):
     __tablename__ = 'question'
@@ -37,6 +39,7 @@ class Question(db.Model):
     answer2 = db.Column(db.Text, nullable=False)
     answer3 = db.Column(db.Text, nullable=False)
     answer4 = db.Column(db.Text, nullable=False)
+
 
 class Answer(db.Model):
     __tablename__ = 'answer'
@@ -49,7 +52,13 @@ class Answer(db.Model):
     question = db.relationship('Question', backref='answer', lazy=True, uselist=False)
 
     def json(self):
-        return {'question_id': self.question_id, 'answer1': self.answer1, 'answer2': self.answer2, 'answer3': self.answer3, 'answer4': self.answer4}
+        return {'question_id': self.question_id,
+                'answer1': self.answer1,
+                'answer2': self.answer2,
+                'answer3': self.answer3,
+                'answer4': self.answer4}
+
+
 db.create_all()
 
 
@@ -102,7 +111,12 @@ def login_user():
 def create_answer():
     try:
         data = request.get_json()
-        new_answer = Answer(question_id=data['question_id'], answer1=data['answer1'], answer2=data['answer2'], answer3=data['answer3'], answer4=data['answer4'])
+        new_answer = Answer(
+            question_id=data['question_id'],
+            answer1=data['answer1'],
+            answer2=data['answer2'],
+            answer3=data['answer3'],
+            answer4=data['answer4'])
         db.session.add(new_answer)
         db.session.commit()
         return make_response(jsonify({'message': f'answer created, id: {new_answer.question_id}'}), 201)
@@ -125,7 +139,13 @@ def get_answer(question_id):
 def create_question():
     try:
         data = request.get_json()
-        new_question = Question(course=data['course'], question=data['question'], answer1=data['answer1'], answer2=data['answer2'], answer3=data['answer3'], answer4=data['answer4'])
+        new_question = Question(
+            course=data['course'],
+            question=data['question'],
+            answer1=data['answer1'],
+            answer2=data['answer2'],
+            answer3=data['answer3'],
+            answer4=data['answer4'])
         db.session.add(new_question)
         db.session.commit()
         return make_response(jsonify({'message': f'question created, id: {new_question.id}'}), 201)
