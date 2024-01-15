@@ -26,5 +26,3 @@ I unfortunately couldn't find a workaround to this that would allow us to skip t
 1) docker compose up -d flask_db
 2) docker compose build
 3) docker compose up flask_app
-
-TODO: debug angular when container is up, figure out the IP address thing
