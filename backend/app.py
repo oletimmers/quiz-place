@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_migrate import Migrate
 import datetime
 import jwt
@@ -19,6 +19,8 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['SECRET_KEY'] = 'ilovesofwarecontainerization'
 adminpw = "superadmin"
 
+
+# region models
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -62,6 +64,9 @@ class Answer(db.Model):
 db.create_all()
 
 
+# endregion
+
+# region decorators
 def token_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
@@ -81,6 +86,9 @@ def token_required(f):
 
     return decorator
 
+#endregion
+
+# region endpoints
 
 @app.route('/test', methods=['GET'])
 def test():
@@ -168,7 +176,7 @@ def get_course_questions(course):
                 'answer3': question.answer3,
                 'answer4': question.answer4,
             }
-            for question in questions 
+            for question in questions
         ]
 
         return make_response(jsonify({'questions': questions_list}), 201)
@@ -209,6 +217,8 @@ def get_user(id):
         return make_response(jsonify({'message': 'user not found'}), 404)
     except Exception as e:
         return make_response(jsonify({'message': 'error getting user'}), 500)
+
+# endregion
 
 # CODE TO DROP TABLES
 # # Reflect the existing database tables
