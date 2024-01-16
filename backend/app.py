@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import JSON
 from os import environ
 from flask_cors import CORS, cross_origin
 from flask_migrate import Migrate
@@ -7,6 +8,7 @@ import datetime
 import jwt
 from functools import wraps
 import sys
+from sqlalchemy.orm.attributes import flag_modified
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
@@ -27,9 +29,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     role = db.Column(db.String(20), nullable=False)
+    scores = db.Column(JSON)
 
     def json(self):
-        return {'id': self.id, 'username': self.username, 'role': self.role}
+        return {'id': self.id, 'username': self.username, 'role': self.role, 'scores': self.scores}
 
 
 class Course(db.Model):
@@ -158,6 +161,19 @@ def create_user():
     except Exception as e:
         return make_response(jsonify({'message': 'error creating user'}), 500)
 
+@app.route('/update-user-score/<int:user_id>', methods=['PUT'])
+def update_user_score(user_id):
+    try:
+        user = User.query.filter_by(id=user_id).first() 
+        data = request.get_json()
+        course = data["course"]
+        score = data["score"]
+        user.scores[course] = score 
+        flag_modified(user, "scores") # update the JSON field
+        db.session.commit()
+        return make_response(jsonify({'message': 'user score updated successfully'}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error updating user score'}), 500)
 
 @app.route('/create-course', methods=['POST'])
 @token_required
