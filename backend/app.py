@@ -84,16 +84,17 @@ def token_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
         token = None
+
         if 'x-access-tokens' in request.headers:
             token = request.headers['x-access-tokens']
 
         if not token:
-            return jsonify({'message': 'a valid token is missing'})
+            return make_response(jsonify({'message': 'a valid token is missing'}), 401)
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = User.query.filter_by(id=data['id']).first()
         except:
-            return jsonify({'message': 'token is invalid'})
+            return make_response(jsonify({'message': 'token is invalid'}), 401)
 
         return f(current_user, *args, **kwargs)
 
@@ -144,7 +145,7 @@ def create_user():
 
 @app.route('/create-course', methods=['POST'])
 @token_required
-def create_course():
+def create_course(current_user):
     try:
         data = request.get_json()
         if not data.get('colorCode'):
@@ -155,14 +156,14 @@ def create_course():
         )
         db.session.add(new_course)
         db.session.commit()
-        return make_response(jsonify({'message': f'course created, id: {new_course.id}'}), 201)
+        return make_response(jsonify({'message': f'course created, id: {new_course.id}', 'courseId': f'{new_course.id}'}), 201)
     except Exception as e:
         return make_response(jsonify({'message': f'error creating course: {e}'}), 500)
 
 
 @app.route('/create-question', methods=['POST'])
 @token_required
-def create_question():
+def create_question(current_user):
     try:
         data = request.get_json()
         new_question = Question(
@@ -171,14 +172,14 @@ def create_question():
         )
         db.session.add(new_question)
         db.session.commit()
-        return make_response(jsonify({'message': f'question created, id: {new_question.id}'}), 201)
+        return make_response(jsonify({'message': f'question created, id: {new_question.id}', 'questionId': f'{new_question.id}'}), 201)
     except Exception as e:
         return make_response(jsonify({'message': f'error creating question: {e}'}), 500)
 
 
 @app.route('/create-answer', methods=['POST'])
 @token_required
-def create_answer():
+def create_answer(current_user):
     try:
         data = request.get_json()
         new_answer = Answer(
