@@ -1,1 +1,32 @@
-<p>admin-env works!</p>
+<h3>Courses</h3>
+<mat-accordion>
+    <mat-expansion-panel *ngFor="let course of courses">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{course.title}}
+            </mat-panel-title>
+            <mat-panel-description>
+                Click to see questions
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+            <div class="action-row">
+                <span>Add new questions here:</span>
+                <button class="blue-button" mat-flat-button><span>Add question</span></button>
+            </div>
+            <mat-expansion-panel *ngFor="let question of obsQuestions[course.id] | async">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        {{question.question}}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        Click to see the answers
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <ng-template matExpansionPanelContent>
+                    <app-answer-panel-row [questionId]="question.id"></app-answer-panel-row>
+                </ng-template>
+            </mat-expansion-panel>
+        </ng-template>
+    </mat-expansion-panel>
+</mat-accordion>

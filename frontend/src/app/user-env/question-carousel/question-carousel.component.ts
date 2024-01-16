@@ -6,6 +6,8 @@ import {Database} from "../../staticdatabase";
 import {Result} from "../../models/result";
 import {NgbCarousel} from "@ng-bootstrap/ng-bootstrap";
 import {UserEnvComponent} from "../user-env.component";
+import {InformationService} from "../../services/information.service";
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 @Component({
   selector: 'app-question-carousel',
@@ -13,13 +15,13 @@ import {UserEnvComponent} from "../user-env.component";
   styleUrls: ['./question-carousel.component.scss']
 })
 export class QuestionCarouselComponent {
-  @Input() course: Course = new Course("", null, null);
+  @Input() course: Course = new Course(0,"", null, null);
 
-  constructor(private user: UserEnvComponent) {}
+  constructor(private user: UserEnvComponent, private informationService: InformationService) {}
 
   async ngOnChanges() {
     console.log('Input course in app-question-carousel:', this.course);
-    this.questions = await this.loadQuestions();;
+    this.fetchQuestions();
     console.log("Questions loaded!")
   }
 
@@ -30,74 +32,69 @@ export class QuestionCarouselComponent {
   // @ts-ignore
   @ViewChild('carousel') carousel: NgbCarousel;
 
-  async fetchQuestions() {
+  fetchQuestions() {
     console.log(this.course.title);
 
     try {
-      const response = await fetch(`http://localhost:4000/get-course-questions/${this.course.title}`, {
-        method: 'GET',
+      // const response = await fetch(`http://localhost:4000/get-course-questions/${this.course.title}`, {
+      //   method: 'GET',
+      // });
+      this.informationService.getCourseQuestions(this.course.title).subscribe({
+        next: (data) => {
+          this.mapQuestions(data.questions);
+        },
+        error: (data) => {
+          throw new Error(`Network response was not ok: ${data.message}`);
+        }
       });
-
-      if (!response.ok) { throw new Error('Network response was not ok: ${response.statusText}'); }
-
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const data = await response.json();
-        if (data.questions) {
-          const questions = data.questions;
-          console.log(questions);
-          return questions;
-        } else { throw new Error('Response did not include JSON object'); }
-      }
     } catch (error) {
       console.error('Error:', error);
     }
   }
 
-  async fetchAnswer(id: number) {
+  fetchAnswer(id: number) {
     console.log(this.course.title);
 
-    try {
-      const response = await fetch(`http://localhost:4000/get-answer/${id}`, {
-        method: 'GET',
-      });
-
-      if (!response.ok) { throw new Error('Network response was not ok: ${response.statusText}'); }
-
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const data = await response.json();
-        if (data.answer) {
-          const answer = data.answer;
-          console.log(answer);
-          return answer;
-        } else { throw new Error('Response did not include JSON object'); }
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    // try {
+    //   const response = await fetch(`http://localhost:4000/get-answer/${id}`, {
+    //     method: 'GET',
+    //   });
+    //
+    //   if (!response.ok) { throw new Error('Network response was not ok: ${response.statusText}'); }
+    //
+    //   const contentType = response.headers.get('content-type');
+    //   if (contentType && contentType.includes('application/json')) {
+    //     const data = await response.json();
+    //     if (data.answer) {
+    //       const answer = data.answer;
+    //       console.log(answer);
+    //       return answer;
+    //     } else { throw new Error('Response did not include JSON object'); }
+    //   }
+    // } catch (error) {
+    //   console.error('Error:', error);
+    // }
   }
 
-  async loadQuestions() {
-    const questions_data = await this.fetchQuestions();
+  mapQuestions(questions_data: any[]) {
     let questions_list = []
     for (var q of questions_data){
       let question = q['question'];
       // Retrieve the answers using the id
       let id = q['id']
-      let answer_data = await this.fetchAnswer(id);
-      let answers = [ new Answer(q['answer1'], Boolean(answer_data['answer1'])),
-                      new Answer(q['answer2'], Boolean(answer_data['answer2'])),
-                      new Answer(q['answer3'], Boolean(answer_data['answer3'])),
-                      new Answer(q['answer4'], Boolean(answer_data['answer4'])) ]
+      // let answer_data = await this.fetchAnswer(id);
+      // let answers = [ new Answer(q['answer1'], Boolean(answer_data['answer1'])),
+      //                 new Answer(q['answer2'], Boolean(answer_data['answer2'])),
+      //                 new Answer(q['answer3'], Boolean(answer_data['answer3'])),
+      //                 new Answer(q['answer4'], Boolean(answer_data['answer4'])) ]
       // Create Question object and add to array
-      questions_list.push( new Question(question, answers) )
+      questions_list.push( new Question(question, [new Answer("This one is correct", true)]) )
     }
     let temp_questions = ShuffleMachine.shuffleArray(questions_list);
     temp_questions.forEach((question: Question)=> {
       question.answers = ShuffleMachine.shuffleArray(question.answers);
     });
-    return temp_questions;
+    this.questions = temp_questions;
   }
 
   processResult(result: Result) {

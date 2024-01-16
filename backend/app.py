@@ -195,6 +195,56 @@ def create_answer(current_user):
         return make_response(jsonify({'message': f'error creating answer: {e}'}), 500)
 
 
+@app.route('/course', methods=['GET'])
+def get_all_courses():
+    try:
+        courses = Course.query.all()
+        courses_list = [
+            {
+                'id': course.id,
+                'title': course.title,
+                'colorCode': course.color_code
+            }
+            for course in courses
+        ]
+        return make_response(jsonify({'courses': courses_list}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': f'error getting questions: {e}'}), 500)
+
+
+@app.route('/course/<course_id>/questions', methods=['GET'])
+def get_course_questions(course_id):
+    try:
+        questions = Question.query.filter_by(course_id=course_id).all()
+        questions_list = [
+            {
+                'id': question.id,
+                'course': question.course_id,
+                'question': question.question,
+            }
+            for question in questions
+        ]
+        return make_response(jsonify({'questions': questions_list}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': f'error getting questions: {e}'}), 500)
+
+
+@app.route('/question/<question_id>/answers', methods=['GET'])
+def get_answers_from_questions(question_id):
+    try:
+        answers = Answer.query.filter_by(question_id=question_id).all()
+        answer_list = [
+            {
+                'questionId': answer.question_id,
+                'answer': answer.answer,
+                'isCorrect': answer.is_correct,
+            }
+            for answer in answers
+        ]
+        return make_response(jsonify({'answers': answer_list}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': f'error getting answers from question: {e}'}), 500)
+
 
 @app.route('/course/<course_id>', methods=['GET'])
 def get_course(course_id):

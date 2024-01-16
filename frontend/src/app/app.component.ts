@@ -12,7 +12,7 @@ import {AuthService} from "./services/auth.service";
 })
 export class AppComponent {
   title = 'quiz-place';
-  isAdmin: boolean = false;
+  isAdmin: boolean = true;
 
   constructor(
     public dialog: MatDialog,

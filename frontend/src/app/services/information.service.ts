@@ -19,6 +19,18 @@ export class InformationService {
     return throwError('Something went wrong; please try again later.');
   }
 
+  public getCourses() {
+    return this.httpClient.get<any>(this.baseURL + '/course');
+  }
+
+  public getQuestionsFromCourse(id: number) {
+    return this.httpClient.get<any>(`${this.baseURL}/course/${id}/questions`);
+  }
+
+  public getAnswersFromQuestion(questionId: number) {
+    return this.httpClient.get<any>(`${this.baseURL}/question/${questionId}/answers`);
+  }
+
   public createQuestion(question: any) {
     console.log("creating question...");
     // EXAMPLE INPUT:
@@ -32,7 +44,7 @@ export class InformationService {
     // };
     return this.httpClient
             .post<any>(this.baseURL + '/create-question', question).pipe(
-              catchError(this.handleError) 
+              catchError(this.handleError)
             );
   }
 
@@ -52,10 +64,10 @@ export class InformationService {
     //       }
     //   ]
     // }
-    
+
     return this.httpClient
             .get<any>(this.baseURL + '/get-course-questions/' + courseName).pipe(
-              catchError(this.handleError) 
+              catchError(this.handleError)
             );
   }
 }

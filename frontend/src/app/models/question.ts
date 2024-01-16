@@ -1,5 +1,5 @@
 export class Question {
-  constructor(public questionText: string, public answers: Answer[], public image?: string) {}
+  constructor(public questionText: string, public answers: Answer[], public image?: string, public id: number = 0) {}
   hasMultipleCorrectAnswers(): boolean {
     const correctAnswers = this.answers.filter(answer => answer.isCorrect);
     return correctAnswers.length > 1;
