@@ -16,8 +16,11 @@ migrate = Migrate(app, db)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-app.config['SECRET_KEY']='ilovesofwarecontainerization'
+app.config['SECRET_KEY'] = 'ilovesofwarecontainerization'
 adminpw = "superadmin"
+
+
+# region models
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -26,33 +29,57 @@ class User(db.Model):
     role = db.Column(db.String(20), nullable=False)
 
     def json(self):
-        return {'id': self.id,'username': self.username, 'role': self.role}
+        return {'id': self.id, 'username': self.username, 'role': self.role}
+
+
+class Course(db.Model):
+    __tablename__ = 'course'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text, nullable=False)
+    color_code = db.Column(db.Text, nullable=False)
+    questions = db.relationship('Question', backref='course', lazy='noload')
+
+    # def json(self):
+    #     return {'id': self.id,
+    #             'title': self.title,
+    #             'colorCode': self.color_code,
+    #             'questions': self.get_question}
+
 
 class Question(db.Model):
     __tablename__ = 'question'
     id = db.Column(db.Integer, primary_key=True)
-    course = db.Column(db.Text, nullable=False)
     question = db.Column(db.Text, nullable=False)
-    answer1 = db.Column(db.Text, nullable=False)
-    answer2 = db.Column(db.Text, nullable=False)
-    answer3 = db.Column(db.Text, nullable=False)
-    answer4 = db.Column(db.Text, nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
+    answers = db.relationship('Answer', backref='question')
+
+    # def json(self):
+    #     return {'id': self.id,
+    #             'title': self.title,
+    #             'colorCode': self.color_code,
+    #             'questions': self.questions.json}
+
 
 class Answer(db.Model):
     __tablename__ = 'answer'
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'), primary_key=True)
-    # 1 means answer is correct, 0 means answer is wrong
-    answer1 = db.Column(db.Integer, nullable=False)
-    answer2 = db.Column(db.Integer, nullable=False)
-    answer3 = db.Column(db.Integer, nullable=False)
-    answer4 = db.Column(db.Integer, nullable=False)
-    question = db.relationship('Question', backref='answer', lazy=True, uselist=False)
+    answer = db.Column(db.Text, nullable=False, primary_key=True)
+    is_correct = db.Column(db.BOOLEAN, nullable=False)
 
-    def json(self):
-        return {'question_id': self.question_id, 'answer1': self.answer1, 'answer2': self.answer2, 'answer3': self.answer3, 'answer4': self.answer4}
+    # def json(self):
+    #     return {'question_id': self.question_id,
+    #             'answer1': self.answer1,
+    #             'answer2': self.answer2,
+    #             'answer3': self.answer3,
+    #             'answer4': self.answer4}
+
+
 db.create_all()
 
 
+# endregion
+
+# region decorators
 def token_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
@@ -71,6 +98,11 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
 
     return decorator
+
+# endregion
+
+
+# region endpoints
 
 
 @app.route('/test', methods=['GET'])
@@ -97,65 +129,6 @@ def login_user():
     return make_response('Could not verify', 401, {'Authentication': '"login required"'})
 
 
-@app.route('/create-answer', methods=['POST'])
-@token_required
-def create_answer():
-    try:
-        data = request.get_json()
-        new_answer = Answer(question_id=data['question_id'], answer1=data['answer1'], answer2=data['answer2'], answer3=data['answer3'], answer4=data['answer4'])
-        db.session.add(new_answer)
-        db.session.commit()
-        return make_response(jsonify({'message': f'answer created, id: {new_answer.question_id}'}), 201)
-    except Exception as e:
-        return make_response(jsonify({'message': f'error creating answer: {e}'}), 500)
-
-
-@app.route('/get-answer/<int:question_id>')
-def get_answer(question_id):
-    try:
-        answer = Answer.query.filter_by(question_id=question_id).first()
-        if answer:
-            return make_response(jsonify({'answer': answer.json()}), 200)
-        return make_response(jsonify({'message': 'answer not found'}), 404)
-    except Exception as e:
-        return make_response(jsonify({'message': f'error getting answer: {e}'}), 500)
-
-
-@app.route('/create-question', methods=['POST'])
-def create_question():
-    try:
-        data = request.get_json()
-        new_question = Question(course=data['course'], question=data['question'], answer1=data['answer1'], answer2=data['answer2'], answer3=data['answer3'], answer4=data['answer4'])
-        db.session.add(new_question)
-        db.session.commit()
-        return make_response(jsonify({'message': f'question created, id: {new_question.id}'}), 201)
-    except Exception as e:
-        return make_response(jsonify({'message': f'error creating question: {e}'}), 500)
-
-
-@app.route('/get-course-questions/<course>', methods=['GET'])
-def get_course_questions(course):
-    try:
-        questions = Question.query.filter_by(course=course).all()
-
-        questions_list = [
-            {
-                'id': question.id,
-                'course': question.course,
-                'question': question.question,
-                'answer1': question.answer1,
-                'answer2': question.answer2,
-                'answer3': question.answer3,
-                'answer4': question.answer4,
-            }
-            for question in questions 
-        ]
-
-        return make_response(jsonify({'questions': questions_list}), 201)
-    except Exception as e:
-        return make_response(jsonify({'message': f'error getting questions: {e}'}), 500)
-
-
 # create a user
 @app.route('/create-user', methods=['POST'])
 def create_user():
@@ -168,6 +141,133 @@ def create_user():
     except Exception as e:
         return make_response(jsonify({'message': 'error creating user'}), 500)
 
+
+@app.route('/create-course', methods=['POST'])
+@token_required
+def create_course():
+    try:
+        data = request.get_json()
+        if not data.get('colorCode'):
+            data['colorCode'] = 'white'
+        new_course = Course(
+            title=data['title'],
+            color_code=data['colorCode']
+        )
+        db.session.add(new_course)
+        db.session.commit()
+        return make_response(jsonify({'message': f'course created, id: {new_course.id}'}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': f'error creating course: {e}'}), 500)
+
+
+@app.route('/create-question', methods=['POST'])
+@token_required
+def create_question():
+    try:
+        data = request.get_json()
+        new_question = Question(
+            question=data['question'],
+            course_id=data['courseId']
+        )
+        db.session.add(new_question)
+        db.session.commit()
+        return make_response(jsonify({'message': f'question created, id: {new_question.id}'}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': f'error creating question: {e}'}), 500)
+
+
+@app.route('/create-answer', methods=['POST'])
+@token_required
+def create_answer():
+    try:
+        data = request.get_json()
+        new_answer = Answer(
+            question_id=data['questionId'],
+            answer=data['answer'],
+            # in JSON 0 or 1
+            is_correct=data['isCorrect']
+            )
+        db.session.add(new_answer)
+        db.session.commit()
+        return make_response(jsonify({'message': f'answer created, question_id: {new_answer.question_id}'}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': f'error creating answer: {e}'}), 500)
+
+
+
+@app.route('/course/<course_id>', methods=['GET'])
+def get_course(course_id):
+    """
+    @efe, I want to retrieve the whole course with all of its questions and answers (nested) with this function.
+    :param course_id:
+    :return:
+    """
+    try:
+        course = Course.query.filter_by(id=course_id).first()
+
+        # course_dict = {
+        #     'title': course.title,
+        #     'colorCode': course.color_code,
+        #     'questions': [
+        #         {
+        #             'id': question.id,
+        #             'question':
+        #         }
+        #     ]
+        # }
+        # manually load in questions due to lazy load
+        questions = course.questions
+        #
+        # questions_list = [
+        #     {
+        #         'id': question.id,
+        #         'course': question.course,
+        #         'question': question.question,
+        #         'answer1': question.answer1,
+        #         'answer2': question.answer2,
+        #         'answer3': question.answer3,
+        #         'answer4': question.answer4,
+        #     }
+        #     for question in questions
+        # ]
+
+        return make_response(jsonify({'course': course}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': f'error getting questions: {e}'}), 500)
+
+
+# @app.route('/get-answers/<int:question_id>')
+# def get_answer(question_id):
+#     try:
+#         answers = Answer.query.filter_by(question_id=question_id).all()
+#         if answers:
+#             return make_response(jsonify({'answers': answers}), 200)
+#         return make_response(jsonify({'message': 'answer not found'}), 404)
+#     except Exception as e:
+#         return make_response(jsonify({'message': f'error getting answer: {e}'}), 500)
+
+
+# @app.route('/get-course-questions/<course>', methods=['GET'])
+# def get_course_questions(course):
+#     try:
+#         questions = Question.query.filter_by(course=course).all()
+#
+#         questions_list = [
+#             {
+#                 'id': question.id,
+#                 'course': question.course,
+#                 'question': question.question,
+#                 'answer1': question.answer1,
+#                 'answer2': question.answer2,
+#                 'answer3': question.answer3,
+#                 'answer4': question.answer4,
+#             }
+#             for question in questions
+#         ]
+#
+#         return make_response(jsonify({'questions': questions_list}), 201)
+#     except Exception as e:
+#         return make_response(jsonify({'message': f'error getting questions: {e}'}), 500)
 
 # get all users
 @app.route('/users', methods=['GET'])
@@ -189,6 +289,8 @@ def get_user(id):
         return make_response(jsonify({'message': 'user not found'}), 404)
     except Exception as e:
         return make_response(jsonify({'message': 'error getting user'}), 500)
+
+# endregion
 
 # CODE TO DROP TABLES
 # # Reflect the existing database tables
