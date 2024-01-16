@@ -40,16 +40,25 @@ class Course(db.Model):
     questions = db.relationship('Question', backref='course', lazy='noload')
 
     def json(self):
-        return {'id': self.id,
-                'title': self.title,
-                'colorCode': self.color_code,
-                'questions': {
-                    question.question: {
-                        answer.answer: answer.is_correct
+        return {
+            'id': self.id,
+            'title': self.title,
+            'colorCode': self.color_code,
+            'questions': [
+                {
+                    "id": question.id,
+                    "question": question.question,
+                    "answers": [
+                        {
+                            "answer": answer.answer,
+                            "correctness": answer.is_correct
+                        }
                         for answer in Answer.query.filter_by(question_id=question.id)
-                    }
-                    for question in Question.query.filter_by(course_id=self.id)
-                }}
+                    ]
+                }
+                for question in Question.query.filter_by(course_id=self.id)
+            ]
+        }
 
 
 class Question(db.Model):
