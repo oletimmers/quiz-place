@@ -18,7 +18,7 @@ I unfortunately couldn't find a workaround to this that would allow us to skip t
 
 ### To run migrations (update the database after changes are made):
 1) go inside the container: docker compose exec quiz_app bash and run the following commands
-2) flask db migrate -m 'migration-message'
+2) flask db stamp head & flask db migrate
 3) flask db upgrade
 4) you can exit the container by supplying "exit" on the command line
 

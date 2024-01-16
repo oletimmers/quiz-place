@@ -39,11 +39,17 @@ class Course(db.Model):
     color_code = db.Column(db.Text, nullable=False)
     questions = db.relationship('Question', backref='course', lazy='noload')
 
-    # def json(self):
-    #     return {'id': self.id,
-    #             'title': self.title,
-    #             'colorCode': self.color_code,
-    #             'questions': self.get_question}
+    def json(self):
+        return {'id': self.id,
+                'title': self.title,
+                'colorCode': self.color_code,
+                'questions': {
+                    question.question: {
+                        answer.answer: answer.is_correct
+                        for answer in Answer.query.filter_by(question_id=question.id)
+                    }
+                    for question in Question.query.filter_by(course_id=self.id)
+                }}
 
 
 class Question(db.Model):
@@ -62,8 +68,9 @@ class Question(db.Model):
 
 class Answer(db.Model):
     __tablename__ = 'answer'
-    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), primary_key=True)
-    answer = db.Column(db.Text, nullable=False, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
+    answer = db.Column(db.Text, nullable=False)
     is_correct = db.Column(db.BOOLEAN, nullable=False)
 
     # def json(self):
@@ -177,7 +184,6 @@ def create_question():
 
 
 @app.route('/create-answer', methods=['POST'])
-@token_required
 def create_answer():
     try:
         data = request.get_json()
@@ -189,7 +195,7 @@ def create_answer():
             )
         db.session.add(new_answer)
         db.session.commit()
-        return make_response(jsonify({'message': f'answer created, question_id: {new_answer.question_id}'}), 201)
+        return make_response(jsonify({'message': f'answer created, answer_id: {new_answer.id}'}), 201)
     except Exception as e:
         return make_response(jsonify({'message': f'error creating answer: {e}'}), 500)
 
@@ -204,7 +210,6 @@ def get_course(course_id):
     """
     try:
         course = Course.query.filter_by(id=course_id).first()
-
         # course_dict = {
         #     'title': course.title,
         #     'colorCode': course.color_code,
@@ -216,22 +221,7 @@ def get_course(course_id):
         #     ]
         # }
         # manually load in questions due to lazy load
-        questions = course.questions
-        #
-        # questions_list = [
-        #     {
-        #         'id': question.id,
-        #         'course': question.course,
-        #         'question': question.question,
-        #         'answer1': question.answer1,
-        #         'answer2': question.answer2,
-        #         'answer3': question.answer3,
-        #         'answer4': question.answer4,
-        #     }
-        #     for question in questions
-        # ]
-
-        return make_response(jsonify({'course': course}), 201)
+        return make_response(jsonify({'course': course.json()}), 201)
     except Exception as e:
         return make_response(jsonify({'message': f'error getting questions: {e}'}), 500)
 
