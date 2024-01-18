@@ -50,11 +50,11 @@ class Course(db.Model):
             'questions': [
                 {
                     "id": question.id,
-                    "question": question.question,
+                    "questionText": question.question,
                     "answers": [
                         {
-                            "answer": answer.answer,
-                            "correctness": answer.is_correct
+                            "text": answer.answer,
+                            "isCorrect": answer.is_correct
                         }
                         for answer in Answer.query.filter_by(question_id=question.id)
                     ]
@@ -80,7 +80,7 @@ class Question(db.Model):
 
 class Answer(db.Model):
     __tablename__ = 'answer'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
     answer = db.Column(db.Text, nullable=False)
     is_correct = db.Column(db.BOOLEAN, nullable=False)
@@ -164,6 +164,7 @@ def create_user():
     except Exception as e:
         return make_response(jsonify({'message': 'error creating user'}), 500)
 
+
 @app.route('/update-user-score/<int:user_id>', methods=['PUT'])
 def update_user_score(user_id):
     try:
@@ -177,6 +178,7 @@ def update_user_score(user_id):
         return make_response(jsonify({'message': 'user score updated successfully'}), 201)
     except Exception as e:
         return make_response(jsonify({'message': 'error updating user score'}), 500)
+
 
 @app.route('/create-course', methods=['POST'])
 @token_required

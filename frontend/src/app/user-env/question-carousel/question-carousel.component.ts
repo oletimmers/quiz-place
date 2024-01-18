@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {Course} from "../../models/course";
 import {Question, Answer} from "../../models/question";
 import {ShuffleMachine} from "../../services/ShuffleMachine";
@@ -7,14 +7,13 @@ import {Result} from "../../models/result";
 import {NgbCarousel} from "@ng-bootstrap/ng-bootstrap";
 import {UserEnvComponent} from "../user-env.component";
 import {InformationService} from "../../services/information.service";
-import {error} from "@angular/compiler-cli/src/transformers/util";
 
 @Component({
   selector: 'app-question-carousel',
   templateUrl: './question-carousel.component.html',
   styleUrls: ['./question-carousel.component.scss']
 })
-export class QuestionCarouselComponent {
+export class QuestionCarouselComponent implements OnInit{
   @Input() course: Course = new Course("", null, null);
 
   constructor(private user: UserEnvComponent, private informationService: InformationService) {}
@@ -34,14 +33,17 @@ export class QuestionCarouselComponent {
 
   fetchQuestions() {
     console.log(this.course.title);
-
+    if (!this.course.id) {
+      return;
+    }
     try {
       // const response = await fetch(`http://localhost:4000/get-course-questions/${this.course.title}`, {
       //   method: 'GET',
       // });
-      this.informationService.getCourseQuestions(this.course.title).subscribe({
+      this.informationService.getQuestionsFromCourse(this.course.id).subscribe({
         next: (data) => {
-          this.mapQuestions(data.questions);
+          this.questions = data.questions;
+          this.ngOnInit();
         },
         error: (data) => {
           throw new Error(`Network response was not ok: ${data.message}`);
@@ -117,5 +119,8 @@ export class QuestionCarouselComponent {
 
   return() {
     this.user.reset();
+  }
+
+  ngOnInit(): void {
   }
 }

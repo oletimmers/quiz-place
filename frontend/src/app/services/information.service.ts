@@ -25,6 +25,10 @@ export class InformationService {
     return this.httpClient.get<any>(this.baseURL + '/course');
   }
 
+  public getCourse(id: number) {
+    return this.httpClient.get<any>(this.baseURL + '/course/' + id);
+  }
+
   public getQuestionsFromCourse(id: number) {
     return this.httpClient.get<any>(`${this.baseURL}/course/${id}/questions`);
   }

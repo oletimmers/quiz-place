@@ -32,21 +32,7 @@ export class UserEnvComponent implements OnInit{
   }
 
   public selectThisCourse(course: Course) {
-    // THESE ARE JUST FOR TESTING, WE CAN DELETE THESE
-    // this.informationService.createQuestion(null).subscribe( {
-    //   next: () => {
-    //     console.log("successful question creation");
-    //   }
-    // });
-
-    this.informationService.getCourseQuestions("FAS").subscribe({
-      next: (data) => {
-        console.log(data);
-      }
-    });
-
     this.selectedCourse = course;
-    console.log("YES");
   }
 
   public reset() { this.selectedCourse = null; }
