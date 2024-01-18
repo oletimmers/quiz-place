@@ -8,18 +8,18 @@
 7) `kubectl get pvc` (persistent volume claim information)
 8) `kubectl describe pod <pod-name>`
 
-to delete a deployment: kubectl delete deployment <deployment-name>
+to delete a deployment: `kubectl delete deployment <deployment-name>`  
 then: `kubectl apply -f api-deployment.yaml` to create deployment again
 ### STEPS FOR DEPLOYING
-sudo docker build .
-check the newly built image: sudo docker images
-from the output, copy image ID
-sudo docker tag <image-id> quiz-app:v1 (make sure to bump the version up each time you rebuild)
-try the image: sudo docker run -p 5000:5000 quiz-app:v1
+`sudo docker build .`  
+check the newly built image: `sudo docker images`  
+from the output, copy image ID  
+`sudo docker tag <image-id> quiz-app:v1` (make sure to bump the version up each time you rebuild)  
+try the image: `sudo docker run -p 5000:5000 quiz-app:v1`
 
-push image to the microk8s registry:
-check the status of microk8s: microk8s status
-start if it's not running: microk8s start
-check if registry addon is enabled, if not: microk8s enable registry
-push image to the registry: sudo docker push localhost:32000/quiz-app:v1 (or the current version)
+push image to the microk8s registry:  
+check the status of microk8s: `microk8s status`  
+start if it's not running: `microk8s start`  
+check if registry addon is enabled, if not: `microk8s enable registry`  
+push image to the registry: `sudo docker push localhost:32000/quiz-app:v1` (or the current version)  
 after this, if you have created the deployment then it should hopefully be working (not the case right now)
