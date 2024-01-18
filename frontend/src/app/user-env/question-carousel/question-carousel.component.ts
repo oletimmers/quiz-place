@@ -15,7 +15,7 @@ import {error} from "@angular/compiler-cli/src/transformers/util";
   styleUrls: ['./question-carousel.component.scss']
 })
 export class QuestionCarouselComponent {
-  @Input() course: Course = new Course(0,"", null, null);
+  @Input() course: Course = new Course("", null, null);
 
   constructor(private user: UserEnvComponent, private informationService: InformationService) {}
 

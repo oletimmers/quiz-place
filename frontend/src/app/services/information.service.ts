@@ -4,6 +4,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {  throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import {Course} from "../models/course";
+import {Question} from "../models/question";
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +33,7 @@ export class InformationService {
     return this.httpClient.get<any>(`${this.baseURL}/question/${questionId}/answers`);
   }
 
-  public createQuestion(question: any) {
+  public createQuestionOld(question: any) {
     console.log("creating question...");
     // EXAMPLE INPUT:
     // question = {
@@ -69,5 +71,17 @@ export class InformationService {
             .get<any>(this.baseURL + '/get-course-questions/' + courseName).pipe(
               catchError(this.handleError)
             );
+  }
+
+  public createCourse(course: Course) {
+    return this.httpClient.post<any>(`${this.baseURL}/create-course`, course);
+  }
+
+  public createQuestion(question: Question) {
+    return this.httpClient.post<any>(`${this.baseURL}/create-question`, question);
+  }
+
+  public createAnswer(answer: any) {
+    return this.httpClient.post<any>(`${this.baseURL}/create-answer`, answer);
   }
 }

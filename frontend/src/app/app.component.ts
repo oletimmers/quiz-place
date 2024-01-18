@@ -12,7 +12,9 @@ import {AuthService} from "./services/auth.service";
 })
 export class AppComponent {
   title = 'quiz-place';
-  isAdmin: boolean = true;
+  isLoggedIn: boolean = false;
+  isAdmin: boolean = false;
+  showDashboard: boolean = false;
 
   constructor(
     public dialog: MatDialog,
@@ -25,7 +27,8 @@ export class AppComponent {
     const dialogRef = this.dialog.open(LoginDialogComponent);
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.successful) {
-        this.isAdmin = true;
+        this.isLoggedIn = true;
+        this.isAdmin = result.isAdmin;
         this.snackbar.open('You are now logged in.');
       } else {
         this.snackbar.open(`Not logged in.`);
@@ -36,5 +39,9 @@ export class AppComponent {
   logOut() {
     this.auth.signOut();
     this.isAdmin = false;
+  }
+
+  toggleDashboard() {
+    this.showDashboard = !this.showDashboard;
   }
 }

@@ -24,7 +24,9 @@ import {MatInputModule} from "@angular/material/input";
 import {authInterceptorProviders} from "./services/auth-interceptor.service";
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from "@angular/material/snack-bar";
 import {MatExpansionModule} from "@angular/material/expansion";
-import { AnswerPanelRowComponent } from './admin-env/answer-panel-row/answer-panel-row.component';
+import { NewCourseDialogComponent } from './admin-env/new-course-dialog/new-course-dialog.component';
+import { QuestionPanelComponent } from './admin-env/question-panel/question-panel.component';
+import { NewQuestionDialogComponent } from './admin-env/new-question-dialog/new-question-dialog.component';
 
 @NgModule({
     declarations: [
@@ -35,7 +37,9 @@ import { AnswerPanelRowComponent } from './admin-env/answer-panel-row/answer-pan
         QuestionCarouselComponent,
         LoginDialogComponent,
         AdminEnvComponent,
-        AnswerPanelRowComponent
+        NewCourseDialogComponent,
+        QuestionPanelComponent,
+        NewQuestionDialogComponent
     ],
     imports: [
         BrowserModule,

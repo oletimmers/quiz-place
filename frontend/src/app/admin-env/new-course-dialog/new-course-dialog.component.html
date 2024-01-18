@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>New course</h1>
+<div class="content" mat-dialog-content>
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>Title of course</mat-label>
+      <input [(ngModel)]='title' required matInput placeholder="Digital Architecture">
+      <mat-icon matSuffix>school</mat-icon>
+    </mat-form-field>
+  </p>
+  <p>
+    <mat-form-field>
+      <mat-label>UI Color</mat-label>
+      <input [(ngModel)]='colorCode' matInput placeholder="White">
+    </mat-form-field>
+  </p>
+
+</div>
+<div mat-dialog-actions>
+  <button (click)="close()" mat-flat-button mat-dialog-close color="accent">Cancel</button>
+  <button (click)="submit()" mat-flat-button color="primary">Submit new course</button>
+</div>
