@@ -31,4 +31,4 @@ I unfortunately couldn't find a workaround to this that would allow us to skip t
 ### Docker file of backend
 Within the docker file of the backend the hostname "flask_db" is defined for the database, this hostname however will 
 probably not exist on the kubernetes deployment of the postgres database. To still connect the api with the database.
-find out the ip of the pod running the postgres database. Find out by `kubectl desribe pod <podname>`
+find out the ip of the pod running the postgres database. Find out by `kubectl desribe pod <podname>` (note that the IP of the pod changes when it stops and restarts)
