@@ -67,11 +67,11 @@ class Course(db.Model):
             'questions': [
                 {
                     "id": question.id,
-                    "question": question.question,
+                    "questionText": question.question,
                     "answers": [
                         {
-                            "answer": answer.answer,
-                            "correctness": answer.is_correct
+                            "text": answer.answer,
+                            "isCorrect": answer.is_correct
                         }
                         for answer in Answer.query.filter_by(question_id=question.id)
                     ]
@@ -97,7 +97,7 @@ class Question(db.Model):
 
 class Answer(db.Model):
     __tablename__ = 'answer'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
     answer = db.Column(db.Text, nullable=False)
     is_correct = db.Column(db.BOOLEAN, nullable=False)
@@ -160,8 +160,11 @@ def login_user():
         token = jwt.encode(
             {'id': user.id, 'role': user.role, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=500)},
             app.config['SECRET_KEY'], "HS256")
+        is_admin = False
+        if user.role.lower() == 'admin':
+            is_admin = True
 
-        return jsonify({'token': token})
+        return jsonify({'token': token, 'isAdmin': is_admin})
 
     return make_response('Could not verify', 401, {'Authentication': '"login required"'})
 
@@ -178,6 +181,7 @@ def create_user():
     except Exception as e:
         return make_response(jsonify({'message': 'error creating user'}), 500)
 
+
 @app.route('/update-user-score/<int:user_id>', methods=['PUT'])
 def update_user_score(user_id):
     try:
@@ -191,6 +195,7 @@ def update_user_score(user_id):
         return make_response(jsonify({'message': 'user score updated successfully'}), 201)
     except Exception as e:
         return make_response(jsonify({'message': 'error updating user score'}), 500)
+
 
 @app.route('/create-course', methods=['POST'])
 @token_required
@@ -216,8 +221,8 @@ def create_question(current_user):
     try:
         data = request.get_json()
         new_question = Question(
-            question=data['question'],
-            course_id=data['courseId']
+            question=data['questionText'],
+            course_id=data['courseId'],
         )
         db.session.add(new_question)
         db.session.commit()
@@ -243,6 +248,46 @@ def create_answer(current_user):
     except Exception as e:
         return make_response(jsonify({'message': f'error creating answer: {e}'}), 500)
 
+
+@app.route('/course', methods=['GET'])
+def get_all_courses():
+    try:
+        courses = Course.query.all()
+        courses_list = [
+            {
+                'id': course.id,
+                'title': course.title,
+                'colorCode': course.color_code
+            }
+            for course in courses
+        ]
+        return make_response(jsonify({'courses': courses_list}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': f'error getting questions: {e}'}), 500)
+
+
+@app.route('/course/<course_id>/questions', methods=['GET'])
+def get_course_questions(course_id):
+    try:
+        questions = Question.query.filter_by(course_id=course_id).all()
+        questions_list = [
+            {
+                'id': question.id,
+                'courseId': question.course_id,
+                'questionText': question.question,
+                "answers": [
+                    {
+                        "text": answer.answer,
+                        "isCorrect": answer.is_correct
+                    }
+                    for answer in Answer.query.filter_by(question_id=question.id).all()
+                ]
+            }
+            for question in questions
+        ]
+        return make_response(jsonify({'questions': questions_list}), 201)
+    except Exception as e:
+        return make_response(jsonify({'message': f'error getting questions: {e}'}), 500)
 
 
 @app.route('/course/<course_id>', methods=['GET'])

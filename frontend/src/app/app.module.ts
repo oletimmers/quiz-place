@@ -23,34 +23,43 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatInputModule} from "@angular/material/input";
 import {authInterceptorProviders} from "./services/auth-interceptor.service";
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatExpansionModule} from "@angular/material/expansion";
+import { NewCourseDialogComponent } from './admin-env/new-course-dialog/new-course-dialog.component';
+import { QuestionPanelComponent } from './admin-env/question-panel/question-panel.component';
+import { NewQuestionDialogComponent } from './admin-env/new-question-dialog/new-question-dialog.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    UserEnvComponent,
-    AdminEnvComponent,
-    QuestionComponent,
-    QuestionCarouselComponent,
-    LoginDialogComponent
-  ],
-  imports: [
-    BrowserModule,
-    NgbModule,
-    BrowserAnimationsModule,
-    MatCardModule,
-    MatRadioModule,
-    MatCheckboxModule,
-    MatProgressBarModule,
-    FormsModule,
-    MatDividerModule,
-    MatButtonModule,
-    HttpClientModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatSnackBarModule,
-  ],
+    declarations: [
+        AppComponent,
+        UserEnvComponent,
+        AdminEnvComponent,
+        QuestionComponent,
+        QuestionCarouselComponent,
+        LoginDialogComponent,
+        AdminEnvComponent,
+        NewCourseDialogComponent,
+        QuestionPanelComponent,
+        NewQuestionDialogComponent
+    ],
+    imports: [
+        BrowserModule,
+        NgbModule,
+        BrowserAnimationsModule,
+        MatCardModule,
+        MatRadioModule,
+        MatCheckboxModule,
+        MatProgressBarModule,
+        FormsModule,
+        MatDividerModule,
+        MatButtonModule,
+        HttpClientModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatExpansionModule,
+    ],
   providers: [
     authInterceptorProviders,
     {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000}}
