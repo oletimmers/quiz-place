@@ -8,22 +8,27 @@ import {InformationService} from "../services/information.service";
   templateUrl: './user-env.component.html',
   styleUrls: ['./user-env.component.scss']
 })
-export class UserEnvComponent {
-  constructor(private informationService:InformationService) {}
+export class UserEnvComponent implements OnInit{
+  courses: Course[] = []
+  constructor(private informationService:InformationService) {
+    this.getCourses();
+  }
 
   ngOnInit(): void {
   }
   selectedCourse: Course | null = null;
 
 
-  public getCourses(): Course[]{
-    return [
-      new Course("Coding and Cryptography", "#A9D8B8", null),
-      new Course("Software Security", "#A7C4B5", null),
-      new Course("Digital Architecture", "#BC4B51", Database.questionList),
-      new Course("Service Oriented Design", "#9AA0A8", null),
-      new Course("Fundamentals of Adaptive Software", "#BEFFC7", null),
-    ];
+  public getCourses(){
+    this.informationService.getCourses().subscribe({
+        next: value => {
+          this.courses = value.courses;
+          this.ngOnInit();
+        },
+        error: exception => {
+          alert("Courses can not be retrieved");
+        }
+    });
   }
 
   public selectThisCourse(course: Course) {
@@ -39,7 +44,7 @@ export class UserEnvComponent {
         console.log(data);
       }
     });
-    
+
     this.selectedCourse = course;
     console.log("YES");
   }

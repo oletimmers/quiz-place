@@ -2,7 +2,7 @@
   <p>You have not chosen a course you want to test yourself with.</p>
   <p>Choose a course down below here.</p>
   <div class="courses-to-choose-from">
-    <div class="card-wrapper" *ngFor="let course of getCourses()">
+    <div class="card-wrapper" *ngFor="let course of courses">
       <mat-card  (click)="selectThisCourse(course)" style="background-color: {{course.colorCode}};">
         <mat-card-content>{{course.title}}</mat-card-content>
       </mat-card>

@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>New question</h1>
+<div class="content" mat-dialog-content>
+  <p>
+    <mat-form-field appearance="fill">
+      <mat-label>Question</mat-label>
+      <input [(ngModel)]='question.questionText' required matInput placeholder="What is a architecture?">
+      <mat-icon matSuffix>question</mat-icon>
+    </mat-form-field>
+  </p>
+</div>
+<div mat-dialog-actions>
+  <button (click)="close()" mat-flat-button mat-dialog-close color="accent">Close</button>
+  <button (click)="submit()" mat-flat-button class="blue-button">Create question</button>
+</div>
+
