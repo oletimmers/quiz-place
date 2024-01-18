@@ -7,6 +7,7 @@
 6) `kubectl get pv` (persistent volume information)
 7) `kubectl get pvc` (persistent volume claim information)
 8) `kubectl describe pod <pod-name>`
+9) to see the descriptor of the the deployment in yaml format: `kubectl get deployment <deployment-name> -o yaml`
 
 to delete a deployment: `kubectl delete deployment <deployment-name>`  
 then: `kubectl apply -f api-deployment.yaml` to create deployment again
