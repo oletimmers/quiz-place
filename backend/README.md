@@ -30,7 +30,7 @@ check the status of microk8s: `microk8s status`
 start if it's not running: `microk8s start`  
 check if registry addon is enabled, if not: `microk8s enable registry`  
 push image to the registry: `sudo docker push localhost:32000/quiz-app:latest`       
-finally, delete the pods in the current deployment with the command `kubectl delete pods --selector=app=quiz-api --namespace=quiz-app`  
+finally, delete the pods in the current deployment with the command `kubectl delete pods --selector=app=quiz-api --namespace=quiz-app` (after deletion, the pods will be recreated with the newly built image)    
 after this, if you have created the deployment then it should hopefully be working  
 ### TO VIEW THE DEPLOYED DATABASE
 `psql -h localhost -U postgres --password -p 30001 postgres`  
