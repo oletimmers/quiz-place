@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: quiz-ui-service
+spec:
+  type: NodePort
+  ports:
+  - protocol: TCP
+    nodePort: 30002
+    port: 8091
+    targetPort: 80
+  selector:
+    app: quiz-ui

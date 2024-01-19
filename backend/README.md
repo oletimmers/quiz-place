@@ -23,7 +23,7 @@ then: `kubectl apply -f api-deployment.yaml` to create deployment again
 check the newly built image: `sudo docker images`  
 from the output, copy image ID  
 `sudo docker tag <image-id> localhost:32000/quiz-app:latest`
-try the image: `sudo docker run -p 5000:5000 localhost:32000/quiz-app:latest`
+try the image: `sudo docker run -p 5000:5000 localhost:32000/quiz-app:latest` (not necessary and may not work)  
 
 push image to the microk8s registry:  
 check the status of microk8s: `microk8s status`  
