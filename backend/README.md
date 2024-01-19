@@ -12,8 +12,8 @@
 11) to get deployments in a specific namespace: `kubectl get deployments -n quiz-app`
 12) get pods in a namespace: `kubectl get pod -n quiz-app`
 13) get logs of a pod in a namespace: `kubectl logs <pod-name> -n quiz-app`
-14) to go into the container: `kubectl exec -it <pod-name> --namespace=<namespace-name> -- /bin/sh`
-to restart a deployment: `kubectl rollout restart deployment <deployment-name>`
+14) to go into the container: `kubectl exec -it <pod-name> --namespace=<namespace-name> -- /bin/sh`  
+15) to restart a deployment: `kubectl rollout restart deployment <deployment-name>`
 
 to delete a deployment: `kubectl delete deployment <deployment-name>`  
 then: `kubectl apply -f api-deployment.yaml` to create deployment again
