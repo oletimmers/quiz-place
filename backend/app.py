@@ -10,8 +10,23 @@ from functools import wraps
 import sys
 from sqlalchemy.orm.attributes import flag_modified
 
+# READ ENV VARIABLES
+DB_DB = environ.get('POSTGRES_DB')
+DB_HOST = environ.get('POSTGRES_HOST')
+DB_PORT = environ.get('POSTGRES_PORT')
+DB_USER = environ.get('POSTGRES_USER')
+DB_PASS = environ.get('POSTGRES_PASSWORD')
+
+URI = 'postgresql://{}:{}@{}:{}/{}'.format(
+    DB_USER,
+    DB_PASS.strip(),
+    DB_HOST,
+    DB_PORT,
+    DB_DB
+)
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = URI
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
