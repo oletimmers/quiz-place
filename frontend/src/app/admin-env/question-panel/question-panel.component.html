@@ -1,0 +1,28 @@
+<mat-expansion-panel *ngIf="question">
+  <mat-expansion-panel-header>
+    <mat-panel-title >
+      {{question.questionText}}
+    </mat-panel-title>
+    <mat-panel-description>
+      Click to see the answers
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <ul>
+    <li>
+      <div class="new-answer">
+        <mat-form-field appearance="fill">
+          <mat-label>New answer</mat-label>
+          <input matInput [(ngModel)]="newAnswer">
+        </mat-form-field>
+        <mat-checkbox  [(ngModel)]="newAnswerIsCorrect">Correct?</mat-checkbox>
+        <button (click)="submitNewAnswer()" mat-flat-button color="primary">Submit answer</button>
+      </div>
+    </li>
+    <li *ngFor="let answer of question.answers">
+      <div class="answer">
+        <span>{{answer.text}}</span>
+        <mat-icon *ngIf="answer.isCorrect" aria-hidden="false" fontIcon="check"></mat-icon>
+      </div>
+    </li>
+  </ul>
+</mat-expansion-panel>

@@ -1,11 +1,15 @@
 <header><h1>Quiz Place :-)</h1></header>
 <main>
-  <app-admin-env *ngIf="isAdmin"></app-admin-env>
-  <div class="logout-place" *ngIf="isAdmin">
+  <app-user-env *ngIf="!showDashboard"></app-user-env>
+  <div class="show-dash" *ngIf="isAdmin && isLoggedIn">
+    <button (click)="toggleDashboard()" *ngIf="!showDashboard" mat-flat-button color="primary">Admin dashboard</button>
+    <button (click)="toggleDashboard()" *ngIf="showDashboard" mat-flat-button color="primary">Hide admin dashboard</button>
+  </div>
+  <app-admin-env *ngIf="isAdmin && isLoggedIn && showDashboard"></app-admin-env>
+  <div class="logout-place" *ngIf="isLoggedIn">
     <button (click)="logOut()" mat-flat-button color="accent" >Logout</button>
   </div>
-  <app-user-env *ngIf="!isAdmin"></app-user-env>
-  <div class="login-place" *ngIf="!isAdmin">
+  <div class="login-place" *ngIf="!isLoggedIn">
     <button (click)="openLoginDialog()" mat-flat-button color="accent" >Login</button>
   </div>
 </main>

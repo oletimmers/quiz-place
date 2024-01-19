@@ -29,6 +29,7 @@ export class LoginDialogComponent {
         this.authService.saveToken(data.token);
         this.dialogRef.close({
           successful: true,
+          isAdmin: data.isAdmin,
           errorMessage: null,
         });
       },
