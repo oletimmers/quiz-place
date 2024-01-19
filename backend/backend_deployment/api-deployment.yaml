@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: quiz-api-deployment
+  namespace: quiz-app
   labels:
     app: quiz-api
 spec:
@@ -11,12 +12,13 @@ spec:
       app: quiz-api
   template:
     metadata:
+      namespace: quiz-app
       labels:
         app: quiz-api
     spec:
       containers:
       - name: quiz-api-container
-        image: localhost:32000/quiz-app:v1
+        image: localhost:32000/quiz-app:latest
         ports:
         - containerPort: 5000
         env:
@@ -26,10 +28,10 @@ spec:
                 name: postgres-secret
                 key: POSTGRES_PASSWORD
           - name: POSTGRES_DB
-            value: 'postgres'
+            value: postgres
           - name: POSTGRES_HOST
-            value: 'localhost'
+            value: postgres-service
           - name: POSTGRES_PORT
             value: '5432'
           - name: POSTGRES_USER
-            value: 'postgres'
+            value: postgres

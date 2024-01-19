@@ -15,7 +15,7 @@ DB_DB = environ.get('POSTGRES_DB')
 DB_HOST = environ.get('POSTGRES_HOST')
 DB_PORT = environ.get('POSTGRES_PORT')
 DB_USER = environ.get('POSTGRES_USER')
-DB_PASS = environ.get('POSTGRESS_PASSWORD')
+DB_PASS = environ.get('POSTGRES_PASSWORD')
 
 URI = 'postgresql://{}:{}@{}:{}/{}'.format(
     DB_USER,
@@ -24,8 +24,6 @@ URI = 'postgresql://{}:{}@{}:{}/{}'.format(
     DB_PORT,
     DB_DB
 )
-
-print("URI:", URI)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = URI

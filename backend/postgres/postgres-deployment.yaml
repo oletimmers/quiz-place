@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres-deployment
+  namespace: quiz-app
 spec:
   replicas: 1
   selector:
@@ -9,6 +10,7 @@ spec:
       app: postgres
   template:
     metadata:
+      namespace: quiz-app
       labels:
         app: postgres
     spec:

@@ -2,6 +2,7 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: postgres-pv-volume
+  namespace: quiz-app
   labels:
     type: local
     app: postgres
@@ -20,6 +21,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: postgres-pv-claim
+  namespace: quiz-app
   labels:
     app: postgres
 spec:
