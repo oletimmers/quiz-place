@@ -1,15 +1,18 @@
 ### USEFUL COMMANDS
 1) kubectl get pods
 2) kubectl get events
-3) kubectl logs <pod-name>
+3) kubectl logs -f <pod-name>
 4) kubectl get svc
 5) kubectl apply -f <name-of-file> after making changes on a yaml file
 6) kubectl get pv (persistent volume information)
 7) kubectl get pvc (persistent volume claim information)
 8) kubectl describe pod <pod-name>
 
+to restart a deployment: kubectl rollout restart deployment <deployment-name>
+
 to delete a deployment: kubectl delete deployment <deployment-name>
 then: `kubectl apply -f api-deployment.yaml` to create deployment again
+
 ### STEPS FOR DEPLOYING
 sudo docker build .
 check the newly built image: sudo docker images
@@ -23,3 +26,7 @@ start if it's not running: microk8s start
 check if registry addon is enabled, if not: microk8s enable registry
 push image to the registry: sudo docker push localhost:32000/quiz-app:v1 (or the current version)
 after this, if you have created the deployment then it should hopefully be working (not the case right now)
+
+### TO VIEW THE DEPLOYED DATABASE
+psql -h localhost -U postgres --password -p 30001 postgres
+the password is: postgres
