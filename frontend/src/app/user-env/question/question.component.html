@@ -1,10 +1,9 @@
 <mat-card>
   <mat-card-header>
     <mat-card-subtitle>{{getSubTitle()}}</mat-card-subtitle>
-    <mat-card-title>{{question.questionText}}</mat-card-title>
+    <mat-card-title *ngIf="question">{{question.questionText}}</mat-card-title>
   </mat-card-header>
-  <mat-card-content>
-    <img *ngIf="question.image != null" mat-card-image src="{{question.image}}" alt="related image">
+  <mat-card-content *ngIf="question">
     <mat-radio-group *ngIf="!question.hasMultipleCorrectAnswers()" aria-label="Select an option" [(ngModel)]="selectedAnswer">
       <mat-radio-button [disabled]="submitted" class="answer" *ngFor="let answer of question.answers" [value]="answer.text">
         {{ answer.text }}
@@ -25,7 +24,7 @@
     </div>
     <div *ngIf="submitted">
       <p *ngIf="goodAnswer">Good answer!</p>
-      <p *ngIf="!goodAnswer">Not the right answer, try again in a minute.</p>
+      <p *ngIf="!goodAnswer">Not the right answer.</p>
     </div>
     <mat-divider></mat-divider>
   </mat-card-content>

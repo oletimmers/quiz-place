@@ -8,7 +8,7 @@ import {Result} from "../../models/result";
   styleUrls: ['./question.component.scss']
 })
 export class QuestionComponent {
-  @Input() question: Question = new Question("", []);
+  @Input() question: Question | null = null;
   @Output() result: EventEmitter<Result> = new EventEmitter();
 
   submitted = false;
@@ -16,6 +16,10 @@ export class QuestionComponent {
   selectedAnswer = "";
 
   public getSubTitle(): string {
+    if (!this.question) {
+      return "Question is not loaded";
+    }
+
     if (this.question.hasMultipleCorrectAnswers()){
       return "Multiple answers possible";
     }
@@ -23,6 +27,9 @@ export class QuestionComponent {
   }
 
   submit() {
+    if (!this.question) {
+      return;
+    }
     if (this.question.hasMultipleCorrectAnswers()) {
       let answerConcept = true;
       this.question.answers.forEach((answer) => {
@@ -36,6 +43,9 @@ export class QuestionComponent {
   }
 
   nextSlide() {
+    if (!this.question) {
+      return;
+    }
     this.result.emit(new Result(this.goodAnswer, this.question));
   }
 

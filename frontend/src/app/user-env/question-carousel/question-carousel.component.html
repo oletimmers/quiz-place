@@ -13,7 +13,7 @@
 </ngb-carousel>
 <div *ngIf="process == 100" class="done">
   <h2>Cool, you're done!</h2>
-  <h3>Reload the page to do this or another quiz again.</h3>
+  <h3>Your score is a <b>{{getScore()}}</b></h3>
 </div>
 <div class="return-button">
   <button (click)="return()" class="button">Go Back</button>
