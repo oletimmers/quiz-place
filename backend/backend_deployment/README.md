@@ -7,7 +7,7 @@ add the following lines to the end of the file and save:
 ## the steps below are the steps i took to configure https for the ui, you should probably just apply each yaml file and verify the tls connection with the command given in the final step (follow the steps above first)  
 1) `openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes`
 2) `kubectl create secret tls my-tls-secret --cert=cert.pem --key=key.pem`
-3) `microk8s disable ingress`
+3) `microk8s disable ingress` and `microk8s enable ingress:default-ssl-certificate=default/my-tls-secret`
 4) `kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.3/cert-manager.yaml`
 5) `microk8s enable cert-manager`
 6) examine resources created by cert-manager: `kubectl get all -n cert-manager` and `kubectl get apiservice`

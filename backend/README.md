@@ -42,6 +42,15 @@ check if registry addon is enabled, if not: `microk8s enable registry`
 push image to the registry: `sudo docker push localhost:32000/quiz-app:latest`       
 finally, delete the pods in the current deployment with the command `kubectl delete pods --selector=app=quiz-api --namespace=quiz-app` (after deletion, the pods will be recreated with the newly built image)    
 after this, if you have created the deployment then it should hopefully be working  
+
+### VERIFY THAT THE LATEST CODE IS ACTUALLY RECIEVED BY THE PODS
+after you see your pods are created:
+1) after issuing the `kubectl get pod -n quiz-app` command you see the names of the pods (there should be 7 of them: three for ui, three for api and one for postgres)
+2) pick one of the api pods (the name is something like "quiz-api-deployment-random-numbers") and copy the name
+3) apply this command `kubectl exec -it <pod-name> --namespace=quiz-app -- /bin/sh`
+4) now that you are inside the pod, issue command `cat app.py`
+5) compare the contents of the file that is printed to the actual app.py file on our repo to see if they match
+
 ### TO VIEW THE DEPLOYED DATABASE
 `psql -h localhost -U postgres --password -p 30001 postgres`  
 the password is: postgres
