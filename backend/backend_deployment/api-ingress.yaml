@@ -10,6 +10,8 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,X-LANG,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-Api-Key,X-Device-Id,Access-Control-Allow-Origin, Authorization, X-Access-Tokens"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/issuer: my-ca-issuer
+    cert-manager.io/common-name: quiz-app.com
 spec:
   rules:
     - host: api.quiz-app.com

@@ -18,4 +18,4 @@ add the following lines to the end of the file and save:
 11) create `ca-issuer.yaml` and apply with `kubectl apply -f ca-issuer.yaml`
 12) configured frontend ingress with the certificates
 13) test: `microk8s kubectl get secret myingress-cert -n quiz-app -o yaml` and `kubectl get Certificate -n quiz-app -o wide`
-14) verify tls connection with openssl: `openssl s_client -showcerts -connect quiz-app.com:443`
+14) verify tls connection with openssl: `openssl s_client -showcerts -connect quiz-app.com:443` and `openssl s_client -showcerts -connect api.quiz-app.com:443`
