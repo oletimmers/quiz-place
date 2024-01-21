@@ -1,0 +1,17 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.genericApp.name }}-service
+  labels:
+    app: {{ .Values.labelapp }}
+    group: {{ .Values.group }}
+spec:
+  type: {{ .Values.genericApp.service.type }}
+  selector:             
+    app: {{ .Values.genericApp.name }}
+  ports:
+    - protocol: {{ .Values.genericApp.service.protocol }}
+      port: {{ .Values.genericApp.service.port }}
+      targetPort: {{ .Values.genericApp.container.port }}
+{{- end }}

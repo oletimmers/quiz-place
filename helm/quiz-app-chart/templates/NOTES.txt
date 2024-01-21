@@ -1,0 +1,6 @@
+Thank you for deploying the Quiz-App.
+
+Release: {{ .Release.Name }}.
+
+You can access the App via:
+https://{{ (index .Values.quizUI.genericApp.ingress.hosts 0).host }}

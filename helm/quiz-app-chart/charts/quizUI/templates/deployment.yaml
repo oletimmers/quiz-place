@@ -1,0 +1,41 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.genericApp.name }}-deployment
+  labels:
+    app: {{ .Values.labelapp }}
+    group: {{ .Values.group }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.genericApp.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.genericApp.name }}
+        group: {{ .Values.group }}
+    spec:
+      containers:
+        - name: {{ .Values.genericApp.name }}-container
+          image: "{{ .Values.genericApp.container.image }}:{{ .Chart.AppVersion }}"
+          ports:
+            - containerPort: {{ .Values.genericApp.container.port }}
+          {{- if .Values.genericApp.config }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.genericApp.config.name }}
+          {{- end }}
+          {{- if .Values.genericApp.secret }}
+          env:
+          {{- $secretName := .Values.genericApp.secret.name }}
+          {{- range .Values.genericApp.secret.data }}
+            - name: {{ .key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: {{ .key }}
+          {{- end}}
+          {{- end}}
+{{- end }}

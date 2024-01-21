@@ -1,0 +1,101 @@
+#####################
+# Quiz DB
+#####################
+quizDB:
+  app: quiz-app
+  group: db
+
+  postgres:
+    name: quiz-db
+    
+    config:
+      name: postgres-config
+      data:
+        - key: POSTGRES_DB
+          value: postgres
+        - key: POSTGRES_USER
+          value: postgres
+        - key: POSTGRES_PORT
+          value: "5433"
+        - key: POSTGRES_HOST
+          value: postgres-service
+    
+    volume:
+      pv:
+        hostPath: "/opt/postgres/helm-data"
+    
+    secret:
+      name: postgres-secret
+      data:
+        - key: POSTGRES_PASSWORD
+          value: cG9zdGdyZXMK
+    
+    service:
+      port: 5433
+
+#####################
+# Quiz API
+#####################
+quizAPI:
+  labelapp: quiz-app
+  group: backend
+
+  genericApp:
+    name: quiz-api
+
+    container:
+      image: localhost:32000/quiz-app
+      port: 5000
+
+    config:
+      name: postgres-config
+
+    secret:
+      name: postgres-secret
+      data:
+        - key: POSTGRES_PASSWORD
+
+    ingress:
+      name: quiz-api
+      annotations:
+        - key: nginx.ingress.kubernetes.io/enable-cors
+          value: "true"
+        - key: nginx.ingress.kubernetes.io/cors-allow-methods
+          value: "PUT, GET, POST, OPTIONS"
+        - key: nginx.ingress.kubernetes.io/cors-allow-origin
+          value: "*"
+        - key: nginx.ingress.kubernetes.io/cors-allow-credentials
+          value: "true"
+      hosts:
+        - host: api.quiz-app-helm.com
+          paths: 
+            - path: /
+              pathType: Prefix
+              backend:
+                serviceName: quiz-api-service
+                servicePort: 8080
+
+#####################
+# Quiz UI
+#####################
+quizUI:
+  labelapp: quiz-app
+  group: frontend
+
+  genericApp:
+    name: quiz-ui
+
+    container:
+      image: localhost:32000/quiz-ui
+      port: 80
+    
+    ingress:
+      name: quiz-ui
+      hosts:
+        - host: quiz-app-helm.com
+          paths: 
+            - path: /
+              pathType: Prefix
+              backend:
+                serviceName: quiz-ui-service
+                servicePort: 8080

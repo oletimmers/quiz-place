@@ -1,0 +1,13 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.postgres.config.name }}
+  labels:
+    app: {{ .Values.app }}
+    group: {{ .Values.group }}
+data: 
+{{- range .Values.postgres.config.data }}
+  {{ .key }}: {{ .value | quote }}
+{{- end}}
+{{- end }}

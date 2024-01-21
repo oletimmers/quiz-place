@@ -1,0 +1,47 @@
+enabled: true
+
+replicaCount: 1
+name: postgres
+group: db
+
+postgres:
+  name: app-db
+
+  container:
+    image: postgres:13.1-alpine
+    imagePullPolicy: "IfNotPresent"
+    port: 5432
+  
+  config:
+    data:
+      - key: key
+        value: value
+        
+  env: []
+
+  secret:
+    type: Opaque
+    data: []
+
+  volume:
+    name: postgres-storage
+    mountPath: /var/lib/postgresql/data
+
+    pv:
+      kind: PersistentVolume
+      name: postgres-persistent-volume
+      storageClass: microk8s-hostpath
+      accessMode: ReadWriteMany
+      storage: 1Gi
+      hostPath: "/opt/postgres/data"
+    
+    pvc:
+      kind: PersistentVolumeClaim
+      name: postgres-persistent-volume-claim
+      storageClass: microk8s-hostpath
+      accessMode: ReadWriteMany
+      storage: 1Gi
+    
+  service:
+    type: ClusterIP
+    port: 5432

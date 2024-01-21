@@ -1,0 +1,3 @@
+Thank you for deploying '{{ .Values.genericApp.name }}'.
+
+Your release is named {{ .Release.Name }}.

@@ -1,0 +1,8 @@
+Thank you for deploying '{{ .Values.postgres.name }}'.
+
+Your release is named {{ .Release.Name }}.
+
+Do not forget to setup the DB environment if you install this deployment for the first time:
+
+1) Create PV host path:
+sudo mkdir {{ .Values.postgres.volume.pv.hostPath }}
