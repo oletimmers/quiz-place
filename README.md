@@ -1,3 +1,5 @@
+# Sofware Containerization at the VU Amsterdam - Group 31 - the quiz-place application
+
 ## Follow these steps to run the app
 BEFORE YOU BUILD THE IMAGES:  
 open your command prompt and issue the command `hostname -I`
