@@ -11,9 +11,11 @@
     <app-question (result)="processResult($event)"  [question]="question"></app-question>
   </ng-template>
 </ngb-carousel>
-<div *ngIf="process == 100" class="done">
+<div *ngIf="result" class="done">
   <h2>Cool, you're done!</h2>
-  <h3>Your score is a <b>{{getScore()}}</b></h3>
+  <h3>Your score is a <b>{{result.score}}</b></h3>
+  <h3 *ngIf="result.currentHighScore && result.newHighScore"><b>It's your new high-score, good job!!</b></h3>
+  <h3 *ngIf="result.currentHighScore && !result.newHighScore">Your current high-score is {{result.currentHighScore}}</h3>
 </div>
 <div class="return-button">
   <button (click)="return()" class="button">Go Back</button>

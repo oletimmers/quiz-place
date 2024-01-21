@@ -26,7 +26,7 @@ export class LoginDialogComponent {
       this.loginCreds.password
     ).subscribe({
       next: (data) => {
-        this.authService.saveToken(data.token);
+        this.authService.saveToken(data.token, data.isAdmin);
         this.dialogRef.close({
           successful: true,
           isAdmin: data.isAdmin,

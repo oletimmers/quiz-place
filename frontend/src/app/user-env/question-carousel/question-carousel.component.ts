@@ -7,6 +7,8 @@ import {NgbCarousel} from "@ng-bootstrap/ng-bootstrap";
 import {UserEnvComponent} from "../user-env.component";
 import {InformationService} from "../../services/information.service";
 import {QuestionComponent} from "../question/question.component";
+import {ResultVM} from "./result.viewmodel";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-question-carousel',
@@ -16,7 +18,7 @@ import {QuestionComponent} from "../question/question.component";
 export class QuestionCarouselComponent implements OnInit{
   @Input() course: Course = new Course("", null, null);
 
-  constructor(private user: UserEnvComponent, private informationService: InformationService) {}
+  constructor(private user: UserEnvComponent, private informationService: InformationService, private auth: AuthService) {}
 
   async ngOnChanges() {
     console.log('Input course in app-question-carousel:', this.course);
@@ -27,7 +29,9 @@ export class QuestionCarouselComponent implements OnInit{
   process = 0;
   questions: Question[] = [];
   currentSlide: number = 1;
-  goodAnswers: number = 0
+  goodAnswers: number = 0;
+
+  result: ResultVM | null = null;
 
   // @ts-ignore
   @ViewChild('carousel') carousel: NgbCarousel;
@@ -49,6 +53,11 @@ export class QuestionCarouselComponent implements OnInit{
             question.id,
             question.courseId
             )));
+          this.questions.forEach((question: Question) => {
+            question.answers.forEach((answer: Answer) => {
+              answer.selected = false;
+            });
+          });
           this.ngOnInit();
         },
         error: (data) => {
@@ -71,12 +80,37 @@ export class QuestionCarouselComponent implements OnInit{
 
   updateProcess() {
     this.process = this.currentSlide / this.questions.length * 100;
-    console.log("Process: " + this.process + "\n " + this.currentSlide + "\n " + this.questions.length)
+    // console.log("Process: " + this.process + "\n " + this.currentSlide + "\n " + this.questions.length)
+    if (this.process >= 100) {
+      this.calculateAndUpdateScore();
+    }
   }
 
-  getScore() {
-    const score = this.goodAnswers / this.questions.length * 10;
-    return Math.round(score * 10) / 10;
+
+  calculateAndUpdateScore() {
+    let score = this.goodAnswers / this.questions.length * 10;
+    score = Math.round(score * 10) / 10;
+    // send this score and retrieve latest high score
+    let newHighScore = false;
+    let currentHighScore: number;
+    if (this.course.id) {
+      console.log("SENDINGNEWSCORE");
+      if (this.auth.getToken()) {
+        this.informationService.putNewUserHighScore(this.course.id, score).subscribe({
+          next: data => {
+            newHighScore = data.newHighScore;
+            currentHighScore = data.currentHighScore;
+            this.result = new ResultVM(score, newHighScore, currentHighScore);
+          },
+          error: err => {
+            console.error(err);
+            this.result = new ResultVM(score, false, null);
+          }
+        });
+      } else {
+        this.result = new ResultVM(score, false, null);
+      }
+    }
   }
 
   return() {

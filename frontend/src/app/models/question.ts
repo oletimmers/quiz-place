@@ -8,6 +8,5 @@ export class Question {
 }
 
 export class Answer {
-  public selected = false;
-  constructor(public text: string, public isCorrect: boolean, public questionId: number | null = null) {}
+  constructor(public text: string, public isCorrect: boolean, public questionId: number | null = null , public selected: boolean = false) {}
 }
