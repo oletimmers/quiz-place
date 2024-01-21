@@ -133,6 +133,30 @@ def token_required(f):
 
     return decorator
 
+
+def token_required_from_admin(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        token = None
+
+        if 'x-access-tokens' in request.headers:
+            token = request.headers['x-access-tokens']
+
+        if not token:
+            return make_response(jsonify({'message': 'a valid token is missing'}), 401)
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = User.query.filter_by(id=data['id']).first()
+            if current_user.role == "admin":
+                return f(current_user, *args, **kwargs)
+            else:
+                return make_response(jsonify({'message': 'user is not admin'}), 401)
+        except:
+            return make_response(jsonify({'message': 'token is invalid'}), 401)
+
+    return decorator
+
+
 # endregion
 
 
@@ -179,23 +203,44 @@ def create_user():
         return make_response(jsonify({'message': 'error creating user'}), 500)
 
 
-@app.route('/update-user-score/<int:user_id>', methods=['PUT'])
-def update_user_score(user_id):
-    try:
-        user = User.query.filter_by(id=user_id).first() 
-        data = request.get_json()
-        course = data["course"]
-        score = data["score"]
-        user.scores[course] = score 
-        flag_modified(user, "scores") # update the JSON field
-        db.session.commit()
-        return make_response(jsonify({'message': 'user score updated successfully'}), 201)
-    except Exception as e:
-        return make_response(jsonify({'message': 'error updating user score'}), 500)
+@app.route('/update-user-score', methods=['PUT'])
+@token_required
+def update_user_score(current_user):
+    # try:
+    data = request.get_json()
+    course_id = data["courseId"]
+    score = data["score"]
+    new_high_score = False
+
+    if current_user.scores is None:
+        current_user.scores = dict()
+
+    if current_user.scores.get(str(course_id)):
+        # if score exists, check if new highscore
+        if current_user.scores[str(course_id)] < score:
+            current_user.scores[str(course_id)] = score
+            new_high_score = True
+    else:
+        # when the score does not exist, new entry => new highscore
+        current_user.scores[str(course_id)] = score
+        new_high_score = True
+
+    flag_modified(current_user, "scores")  # update the JSON field
+    db.session.commit()
+
+    return make_response(jsonify({
+        'message': 'User score updated successfully',
+        'newHighScore': new_high_score,
+        'currentHighScore': current_user.scores[str(course_id)]
+    }), 201)
+
+
+# except Exception as e:
+#     return make_response(jsonify({'message': 'error updating user score', 'exception': e}), 500)
 
 
 @app.route('/create-course', methods=['POST'])
-@token_required
+@token_required_from_admin
 def create_course(current_user):
     try:
         data = request.get_json()
@@ -207,13 +252,14 @@ def create_course(current_user):
         )
         db.session.add(new_course)
         db.session.commit()
-        return make_response(jsonify({'message': f'course created, id: {new_course.id}', 'courseId': f'{new_course.id}'}), 201)
+        return make_response(
+            jsonify({'message': f'course created, id: {new_course.id}', 'courseId': f'{new_course.id}'}), 201)
     except Exception as e:
         return make_response(jsonify({'message': f'error creating course: {e}'}), 500)
 
 
 @app.route('/create-question', methods=['POST'])
-@token_required
+@token_required_from_admin
 def create_question(current_user):
     try:
         data = request.get_json()
@@ -223,13 +269,14 @@ def create_question(current_user):
         )
         db.session.add(new_question)
         db.session.commit()
-        return make_response(jsonify({'message': f'question created, id: {new_question.id}', 'questionId': f'{new_question.id}'}), 201)
+        return make_response(
+            jsonify({'message': f'question created, id: {new_question.id}', 'questionId': f'{new_question.id}'}), 201)
     except Exception as e:
         return make_response(jsonify({'message': f'error creating question: {e}'}), 500)
 
 
 @app.route('/create-answer', methods=['POST'])
-@token_required
+@token_required_from_admin
 def create_answer(current_user):
     try:
         data = request.get_json()
@@ -238,7 +285,7 @@ def create_answer(current_user):
             answer=data['answer'],
             # in JSON 0 or 1
             is_correct=data['isCorrect']
-            )
+        )
         db.session.add(new_answer)
         db.session.commit()
         return make_response(jsonify({'message': f'answer created, answer_id: {new_answer.id}'}), 201)
@@ -296,17 +343,6 @@ def get_course(course_id):
     """
     try:
         course = Course.query.filter_by(id=course_id).first()
-        # course_dict = {
-        #     'title': course.title,
-        #     'colorCode': course.color_code,
-        #     'questions': [
-        #         {
-        #             'id': question.id,
-        #             'question':
-        #         }
-        #     ]
-        # }
-        # manually load in questions due to lazy load
         return make_response(jsonify({'course': course.json()}), 201)
     except Exception as e:
         return make_response(jsonify({'message': f'error getting questions: {e}'}), 500)
@@ -347,6 +383,7 @@ def get_course(course_id):
 
 # get all users
 @app.route('/users', methods=['GET'])
+@token_required_from_admin
 def get_users():
     try:
         users = User.query.all()
@@ -357,6 +394,7 @@ def get_users():
 
 # get a user by id
 @app.route('/users/<int:id>', methods=['GET'])
+@token_required_from_admin
 def get_user(id):
     try:
         user = User.query.filter_by(id=id).first()

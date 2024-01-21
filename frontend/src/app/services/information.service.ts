@@ -37,6 +37,13 @@ export class InformationService {
     return this.httpClient.get<any>(`${this.baseURL}/question/${questionId}/answers`);
   }
 
+  public putNewUserHighScore(courseId: number, score: number) {
+    return this.httpClient.put<any>(`${this.baseURL}/update-user-score`, {
+      'courseId': courseId,
+      'score': score
+    });
+  }
+
   public createQuestionOld(question: any) {
     console.log("creating question...");
     // EXAMPLE INPUT:

@@ -21,6 +21,10 @@ export class AppComponent {
     private snackbar: MatSnackBar,
     private auth: AuthService
     ) {
+    if (this.auth.getToken()) {
+      this.isLoggedIn = true;
+      this.isAdmin = this.auth.isAdminFromToken();
+    }
   }
 
   openLoginDialog() {
@@ -39,6 +43,8 @@ export class AppComponent {
   logOut() {
     this.auth.signOut();
     this.isAdmin = false;
+    this.isLoggedIn = false;
+    this.showDashboard = false;
   }
 
   toggleDashboard() {
