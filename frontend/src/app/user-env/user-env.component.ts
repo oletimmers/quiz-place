@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Course} from "../models/course";
 import {Database} from "../staticdatabase";
 import {InformationService} from "../services/information.service";
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-user-env',
@@ -26,7 +27,7 @@ export class UserEnvComponent implements OnInit{
           this.ngOnInit();
         },
         error: exception => {
-          alert("Courses can not be retrieved");
+          alert("Courses can not be retrieved " + environment.API_BASE_URL);
         }
     });
   }

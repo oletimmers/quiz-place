@@ -18,5 +18,6 @@ spec:
       containers:
       - name: quiz-ui-container
         image: localhost:32000/quiz-ui:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80

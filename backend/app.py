@@ -9,7 +9,6 @@ import jwt
 from functools import wraps
 import sys
 from sqlalchemy.orm.attributes import flag_modified
-
 # READ ENV VARIABLES
 DB_DB = environ.get('POSTGRES_DB')
 DB_HOST = environ.get('POSTGRES_HOST')
@@ -31,7 +30,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['CORS_HEADERS'] = 'Content-Type, Authorization, x-access-tokens'
 
 app.config['SECRET_KEY'] = 'ilovesofwarecontainerization'
 adminpw = "superadmin"
@@ -367,6 +366,8 @@ def get_user(id):
     except Exception as e:
         return make_response(jsonify({'message': 'error getting user'}), 500)
 
+if __name__ == '__main__':
+    app.run(debug=True)
 # endregion
 
 # CODE TO DROP TABLES

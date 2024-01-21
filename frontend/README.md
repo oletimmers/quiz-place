@@ -3,14 +3,14 @@
 ## deployment steps
 1) `sudo docker build -t quiz-ui:latest .`
 2) view the image: `sudo docker images quiz-ui` (not necessary)
-3) make sure to clean up the running container: run `sudo docker ps` to see running containers, if there are any use `sudo docker stop <container-id>`, then `sudo docker rm <container-id>`. finally run `sudo docker ps` again to see that there are no running containers
+3) MAY NOT BE NECESSARY: make sure to clean up the running container: run `sudo docker ps` to see running containers, if there are any use `sudo docker stop <container-id>`, then `sudo docker rm <container-id>`. finally run `sudo docker ps` again to see that there are no running containers (to run: `sudo docker run -p 8091:80 quiz-ui:latest` and go to `http://localhost:8091`)
 4) make sure microk8s is running (`microk8s status`)
 5) tag the image: `sudo docker tag quiz-ui:latest localhost:32000/quiz-ui:latest`
 6) push the image: `sudo docker push localhost:32000/quiz-ui:latest`
-7) create deployment inside `frontend_deployment` folder with `kubectl apply -f ui-deployment.yaml`
-8) check that the related pods are running with `kubectl get pods -l app=quiz-ui`
-9) apply the service inside `frontend-deployment`: `kubectl apply -f ui-service.yaml`
-10) view the app by going to `localhost:30002`
+7) delete pods with `kubectl delete pods --selector=app=quiz-ui --namespace=quiz-app` so they are recreated with the latest image (or create deployment inside `frontend_deployment` folder with `kubectl apply -f ui-deployment.yaml` if you have made changes to the yaml file)
+8) check that the related pods are running with `kubectl get pods -l app=quiz-ui -n quiz-app`
+9) IF CHANGED: apply the service inside `frontend-deployment`: `kubectl apply -f ui-service.yaml`
+10) view the app by going to `localhost:30002` or `https://quiz-app.com`
 
 # QuizPlace
 

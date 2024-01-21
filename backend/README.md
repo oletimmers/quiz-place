@@ -1,3 +1,13 @@
+## IF INGRESS IS NOT ENABLED: microk8s enable ingress
+1) get ingress pod name: `microk8s kubectl get pods -n ingress`
+2) view ingress logs: `microk8s kubectl logs -n ingress <ingress-controller-pod-name>`  
+3) to delete ingress: `kubectl get ingress -n quiz-app` to see ingress names and `kubectl delete ingress <ingress-name> -n quiz-app` 
+
+### ingress related stuff
+1) check status of ingress resource: `microk8s kubectl get ingress -n quiz-app`
+2) to test inside a cluster: `microk8s kubectl run -i --tty --rm debug --image=alpine --namespace=quiz-app -- sh`
+3) inside the pod from number (2): apply `apk add --no-cache curl` and `curl http://api.quiz-app.com` to test
+
 ### USEFUL COMMANDS
 1) `kubectl get pods`
 2) `kubectl get events`
@@ -12,7 +22,7 @@
 11) to get deployments in a specific namespace: `kubectl get deployments -n quiz-app`
 12) get pods in a namespace: `kubectl get pod -n quiz-app`
 13) get logs of a pod in a namespace: `kubectl logs <pod-name> -n quiz-app`
-14) to go into the container: `kubectl exec -it <pod-name> --namespace=<namespace-name> -- /bin/sh`  
+14) to go into the container and check the files etc.: `kubectl exec -it <pod-name> --namespace=quiz-app -- /bin/sh`  
 15) to restart a deployment: `kubectl rollout restart deployment <deployment-name>`
 
 to delete a deployment: `kubectl delete deployment <deployment-name>`  
