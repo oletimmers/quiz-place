@@ -43,7 +43,7 @@ push image to the registry: `sudo docker push localhost:32000/quiz-app:latest`
 finally, delete the pods in the current deployment with the command `kubectl delete pods --selector=app=quiz-api --namespace=quiz-app` (after deletion, the pods will be recreated with the newly built image)    
 after this, if you have created the deployment then it should hopefully be working  
 
-### VERIFY THAT THE LATEST CODE IS ACTUALLY RECIEVED BY THE PODS
+### VERIFY THAT THE LATEST CODE IS ACTUALLY RECEIVED BY THE PODS
 after you see your pods are created:
 1) after issuing the `kubectl get pod -n quiz-app` command you see the names of the pods (there should be 7 of them: three for ui, three for api and one for postgres)
 2) pick one of the api pods (the name is something like "quiz-api-deployment-random-numbers") and copy the name
