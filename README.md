@@ -1,36 +1,102 @@
-# Sofware Containerization at the VU Amsterdam - Group 31 - the quiz-place application
+# Software Containerization at the VU Amsterdam - Group 31 - the quiz-place application
 
-## Follow these steps to run the app
-BEFORE YOU BUILD THE IMAGES:  
-open your command prompt and issue the command `hostname -I`
-from there, copy the first IP address in the output  
-go to frontend/src/environments  
-inside this directory there are two files, in each of them replace API_BASE_URL with "http://the-ip-address:4000" (for example: http://192.168.0.104:4000)  
-I unfortunately couldn't find a workaround to this that would allow us to skip this procedure  
+This repository is created for the Software Containerisation (XM_0091) Project by Group 31 consisting of: 
+Efe Beydoğan, Ole Timmers and Laura Duits. 
 
-1) `docker compose build`
-2) `docker compose up -d`
-3) to see the logs: `docker compose logs -f` OR `docker compose logs CONTAINER_NAME -f` (for example: docker compose logs quiz_app -f)
+The repository is split into two parts: the frontend and the backend. The backend comprises both a REST API
+and a postgres database, while the frontend uses Angular for the application.
 
-### To visualize the database:
-1) download TablePlus: https://tableplus.com/download
-2) select PostgreSQL as the database
-3) Database host: localhost, port: 5432, user: postgres, password: postgres, database name: postgres
-4) you should be able to connect after filling all of the fields as stated above
+The different components included in this project are:
+- A Deployment, Service, Persistent Volume and Persistent Volume Claim.
+- The Service is exposed by the database so it can be accessed by the REST API (but not by users outside of the cluster).
+- The configuration of the database uses ConfigMaps and Secrets.
 
-### To run migrations (update the database after changes are made):
-1) go inside the container: `docker compose exec quiz_app bash` and run the following commands
-2) `flask db stamp head`
-3) `flask db migrate`
-4) `flask db upgrade`
-5) you can exit the container by supplying `exit` on the command line
+## Deployment 
 
-### Other commands of use:
-1) `docker compose up -d flask_db`
-2) `docker compose build`
-3) `docker compose up flask_app`
+In order to deploy the application, you should download and install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+and [MicroK8s](https://canvas.vu.nl/courses/71162/pages/install-microk8s?module_item_id=1201441). 
+Ensure that you have opened Docker Desktop before continuing.
 
-### Docker file of backend
-Within the docker file of the backend the hostname "flask_db" is defined for the database, this hostname however will 
-probably not exist on the kubernetes deployment of the postgres database. To still connect the api with the database.
-find out the ip of the pod running the postgres database. Find out by `kubectl desribe pod <podname>` (note that the IP of the pod changes when it stops and restarts)
+<details>
+    <summary>Required additional steps for Windows and macOS users</summary>
+        Do note that on Windows and macOS the MicroK8s installer employs **multipass** to create a VM within which MicroK8s operates. 
+        Therefore, it is not possible to use `localhost:32000` to deploy the application. Instead, you should update the address 
+        in the following files to the IP address of the VM that deploys the MicroK8s:
+        
+        - `frontend/src/environments/environment.prod.ts`
+        - `frontend/src/environments/environment.ts`
+        - `frontend/frontend_deployment/ui-deployment.yaml` 
+        - `backend/backend_deployment/api-deployment.yaml`
+        
+        To find the IP address, run `multipass list` to get all available VM instances and their IP addresses.
+        Additionally, to avoid deployment issues, you also have to include the IP address in the `"insecure-registries"` of the Docker Engine.
+        In order to deploy the application, replace all the occurrences of `localhost` in the commands with the found IP address.
+
+</details>
+
+In order to access the web application, you should first add `<IP address> api.quiz-app.com` and `<IP address> quiz-app.com`
+to `/etc/hosts` (e.g. `127.0.0.1 app.quiz-app.com` for Linux users).
+
+**Before continuing, ensure that MicroK8s is running using `microk8s status` or `microk8s start` to start MicroK8s. 
+Additionally, run `microk8s disable ingress` and `microk8s enable registry`.**
+
+Run the following commands to create the Secret used for the application:
+
+1) Generate a self-signed certificate: `openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes`
+2) Create a TLS Secret: `kubectl create secret tls my-tls-secret --cert=cert.pem --key=key.pem`
+3) Enable ingress using the created Secret: `microk8s enable ingress:default-ssl-certificate=default/my-tls-secret`
+
+To get the ingress pod name, run `microk8s kubectl get pods -n ingress` and to view the ingress logs `microk8s kubectl logs 
+-n ingress <ingress-controller-pod-name>`
+
+4) `kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.3/cert-manager.yaml`
+5) `microk8s enable cert-manager`
+
+In order to examine the resources created by cert-manager, you can run `kubectl get all -n cert-manager` and 
+`kubectl get apiservice`.
+
+6) Build the Docker Image for the backend by navigating to the `backend` folder and running `sudo docker build .`
+7) Check the newly built image using `sudo docker images` and use the image-id to tag the image with the correct IP address: 
+`sudo docker tag <image-id> localgohost:32000/quiz-app:latest`.
+8) Push the image to the MicroK8s registry: `sudo docker push localhost:32000/quiz-app:latest`
+9) Apply the YAML files by running the following commands:
+
+    ```shell
+    # Define the namespace for the project
+    kubectl apply -f quiz-app-namespace.yaml
+    # Apply the YAML files inside backend_deployment
+    cd backend/backend_deployment
+    kubectl apply -f selfsigned-issuer.yaml
+    kubectl apply -f self-signed-cluster-issuer.yaml
+    kubectl apply -f root-ca.yaml
+    kubectl apply -f ca-issuer.yaml
+    kubectl apply -f api-service.yaml
+    kubectl apply -f api-ingress.yaml
+    kubectl apply -f api-deployment.yaml
+    # Apply the YAML files inside postgres
+    cd ../postgres
+    kubectl apply -f postgres-config.yaml
+    kubectl apply -f postgres-deployment.yaml
+    kubectl apply -f postgres-secret.yaml
+    kubectl apply -f postgres-service.yaml
+    kubectl apply -f postgres-storage.yaml
+    # Apply the YAML files inside frontend_deployment (in the frontend folder)
+    cd ../../frontend/frontend_deployment
+    kubectl apply -f ui-deployment.yaml
+    kubectl apply -f ui-ingress.yaml
+    kubectl apply -f ui-service.yaml
+    ```
+
+To test the configured frontend ingress with the certificates, you can run `microk8s kubectl get secret myingress-cert -n quiz-app -o yaml` and
+`kubectl get Certificate -n quiz-app -o wide`. Additionally, to verify the TLS connection with openssl run `openssl s_client -showcerts -connect quiz-app.com:443`
+and `openssl s_client -showcerts -connect api.quiz-app.com:443`.
+
+10) Delete the pods in the current deployment using `kubectl delete pods --selector=app=quiz-api --namespace=quiz-app` to 
+make sure they are updated in case changes have been made (after deletion, the pods will be recreated with the newly built image).
+
+To see the created pods, run `kubectl get pod -n quiz-app`. There should be seven pods: three for the ui, three for the api and one for postgres.
+
+11) Build the Docker Image for the frontend by navigating to the `frontend` folder and running `sudo docker build -t quiz-ui:latest .`.
+12) Make sure to tag the image with the appropriate IP address: `sudo docker tag quiz-ui:latest localhost:32000/quiz-ui:latest`.
+13) Push the image to the MicroK8s registry: `sudo docker push localhost:32000/quiz-ui:latest`
+14) Delete the pods in the current deployment with the command `kubectl delete pods --selector=app=quiz-ui --namespace=quiz-app`
