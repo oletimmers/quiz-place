@@ -16,9 +16,9 @@ quizDB:
         - key: POSTGRES_USER
           value: postgres
         - key: POSTGRES_PORT
-          value: "5433"
+          value: "5432"
         - key: POSTGRES_HOST
-          value: postgres-service
+          value: quiz-db-service
     
     volume:
       pv:
@@ -31,7 +31,7 @@ quizDB:
           value: cG9zdGdyZXMK
     
     service:
-      port: 5433
+      port: 5432
 
 #####################
 # Quiz API
@@ -61,11 +61,13 @@ quizAPI:
         - key: nginx.ingress.kubernetes.io/enable-cors
           value: "true"
         - key: nginx.ingress.kubernetes.io/cors-allow-methods
-          value: "PUT, GET, POST, OPTIONS"
+          value: "PUT, GET, POST, OPTIONS, DELETE"
         - key: nginx.ingress.kubernetes.io/cors-allow-origin
           value: "*"
         - key: nginx.ingress.kubernetes.io/cors-allow-credentials
           value: "true"
+        - key: nginx.ingress.kubernetes.io/cors-allow-headers
+          value: "DNT,X-CustomHeader,X-LANG,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-Api-Key,X-Device-Id,Access-Control-Allow-Origin, Authorization, X-Access-Tokens"
       hosts:
         - host: api.quiz-app-helm.com
           paths: 

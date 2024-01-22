@@ -32,7 +32,7 @@ postgres:
       name: postgres-persistent-volume
       storageClass: microk8s-hostpath
       accessMode: ReadWriteMany
-      storage: 1Gi
+      storage: 5Gi
       hostPath: "/opt/postgres/data"
     
     pvc:
@@ -40,7 +40,7 @@ postgres:
       name: postgres-persistent-volume-claim
       storageClass: microk8s-hostpath
       accessMode: ReadWriteMany
-      storage: 1Gi
+      storage: 5Gi
     
   service:
     type: ClusterIP
