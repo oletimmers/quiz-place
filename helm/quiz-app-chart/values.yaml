@@ -32,6 +32,11 @@ quizDB:
     
     service:
       port: 5432
+    
+    networkpolicy:
+      namespace: quiz-app-helm
+      name: deny-database-access
+      selectedPodApp: quiz-api
 
 #####################
 # Quiz API

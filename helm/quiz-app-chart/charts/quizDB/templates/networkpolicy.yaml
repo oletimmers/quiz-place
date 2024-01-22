@@ -1,0 +1,16 @@
+{{- if .Values.enabled }}
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: {{ .Values.postgres.networkpolicy.namespace }}
+  name: {{ .Values.postgres.networkpolicy.name }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.postgres.name }}
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: {{ .Values.postgres.networkpolicy.selectedPodApp }}
+{{- end }}
