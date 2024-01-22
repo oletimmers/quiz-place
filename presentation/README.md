@@ -21,8 +21,9 @@
 4) Use these commands to verify TLS connectivity for the UI and the API:
     * `openssl s_client -showcerts -connect quiz-app.com:443`
     * `openssl s_client -showcerts -connect api.quiz-app.com:443`
-5) TODO roles
-6) TODO network policies
+5) `microk8s status` and show the plugins such as MetalLB and Helm3 etc.
+6) TODO roles
+7) TODO network policies
 
 ## Container build and first deployment, scaling, uninstallation
 > Show how you build the container images and publish to a registry (1 point).
