@@ -23,7 +23,17 @@
     * `openssl s_client -showcerts -connect api.quiz-app.com:443`
 5) `microk8s status` and show the plugins such as MetalLB and Helm3 etc.
 6) TODO roles
-7) TODO network policies
+7) Network Policies:
+    1. Database can only be accessed by the API (deny database access to pods that don't have the label `app = quiz-api`):
+        * Create a pod that doesn't have the label `app = quiz-api`: `kubectl run test-$RANDOM --namespace=quiz-app-helm --rm -i -t --image=busybox -- sh`
+        * Inside the shell, issue the command `telnet quiz-db-service 5432`
+        * Observe that the connection is not successful
+
+        * Now create a pod with the appropriate label: `kubectl run test-$RANDOM --namespace=quiz-app-helm --rm -i -t --image=busybox --labels=app=quiz-api -- sh`
+        * Try the previous command again: `telnet quiz-db-service 5432`
+        * Observe that the connection is successful
+
+    2. 
 
 ## Container build and first deployment, scaling, uninstallation
 > Show how you build the container images and publish to a registry (1 point).
