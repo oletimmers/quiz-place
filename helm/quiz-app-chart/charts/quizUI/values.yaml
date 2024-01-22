@@ -12,7 +12,7 @@ genericApp:
     port: 8080
 
   service:
-    type: ClusterIP
+    type: LoadBalancer
     protocol: TCP
     port: 8080
   

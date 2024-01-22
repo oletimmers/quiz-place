@@ -39,6 +39,7 @@ to `/etc/hosts` (e.g. `127.0.0.1 app.quiz-app.com` for Linux users).
 
 **Before continuing, ensure that MicroK8s is running using `microk8s status` or `microk8s start` to start MicroK8s. 
 Additionally, run `microk8s disable ingress` and `microk8s enable registry`.**
+Also run `microk8s enable metallb` and then supply `10.50.100.5-10.50.100.25`
 
 Run the following commands to create the Secret used for the application:
 
