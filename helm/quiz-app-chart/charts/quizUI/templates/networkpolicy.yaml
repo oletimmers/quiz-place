@@ -1,0 +1,18 @@
+{{- if .Values.enabled }}
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: {{ .Values.genericApp.networkpolicy.namespace }}
+  name: {{ .Values.genericApp.networkpolicy.name }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.genericApp.name }}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: {{ .Values.genericApp.networkpolicy.selectedPodApp }}
+{{- end }}

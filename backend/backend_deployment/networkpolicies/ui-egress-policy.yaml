@@ -2,15 +2,15 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   namespace: quiz-app
-  name: deny-database-access
+  name: ui-egress-policy
 spec:
   podSelector:
     matchLabels:
-      app: postgres
+      app: quiz-ui
   policyTypes:
-  - Ingress
-  ingress:
-  - from:
+  - Egress
+  egress:
+  - to:
     - podSelector:
         matchLabels:
           app: quiz-api

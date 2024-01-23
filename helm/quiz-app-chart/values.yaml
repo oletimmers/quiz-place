@@ -106,3 +106,8 @@ quizUI:
               backend:
                 serviceName: quiz-ui-service
                 servicePort: 8080
+    
+    networkpolicy:
+      namespace: quiz-app-helm
+      name: ui-egress-policy
+      selectedPodApp: quiz-api

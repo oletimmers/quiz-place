@@ -20,8 +20,8 @@
 2) Show storage class: `kubectl get sc`
 3) Show registry: `microk8s ctr images ls | grep localhost`
 4) Use these commands to verify TLS connectivity for the UI and the API:
-    * `openssl s_client -showcerts -connect quiz-app.com:443` TODO: change these to the Helm URLs after verifying Helm certificates work
-    * `openssl s_client -showcerts -connect api.quiz-app.com:443`
+    * `openssl s_client -showcerts -connect quiz-app-helm.com:443` TODO: change these to the Helm URLs after verifying Helm certificates work
+    * `openssl s_client -showcerts -connect api.quiz-app-helm.com:443`
 5) `microk8s status` and show the plugins such as MetalLB and Helm3 etc.
 6) TODO roles
 7) Network Policies:
@@ -34,8 +34,21 @@
         * Try the previous command again: `telnet quiz-db-service 5432`
         * Observe that the connection is successful
 
-    2. 
+    2. UI egress is only allowed to the API, and it is prevented for other hosts.
+        * Create a pod like so: `kubectl run test-$RANDOM --image=curlimages/curl:latest --namespace=quiz-app-helm -- sleep infinity`
+        * Note the name of the pod that is created (the name looks like `test-someNumber`)
+        * Enter the pod: `kubectl exec -it name_of_pod -n quiz-app-helm -- /bin/sh`
+        * Issue command `curl -L google.com` and view that it's successful
+        * Delete the pod: `kubectl delete pod name_of_pod -n quiz-app-helm`
 
+        * Create another pod like so, that has the label `quiz-ui`: `kubectl run test-$RANDOM --image=curlimages/curl:latest --namespace=quiz-app-helm --labels=app=quiz-ui -- sleep infinity`
+        * Note the name of the pod that is created (the name looks like `test-someNumber`)
+        * Enter the pod: `kubectl exec -it name_of_pod -n quiz-app-helm -- /bin/sh`
+        * Issue command `curl -L google.com` and view that it is not succesful
+        * Delete the pod: `kubectl delete pod name_of_pod -n quiz-app-helm`
+
+        * Finally show that the webpage is running without any problem on the browser, showing that the API can be reached from the UI.
+        
 ## Container build and first deployment, scaling, uninstallation
 > Show how you build the container images and publish to a registry (1 point).
 * Build the UI images
@@ -54,6 +67,7 @@
 
 > Show how to scale the application horizontally (stateless parts only) (1 point).
 1) `kubectl -n quiz-app-helm scale deployment/quiz-api-deployment --replicas=5`
+2) `kubectl get pod -n quiz-app-helm` and show that there are 5 pods now
 
 > Show how to uninstall the application (1 point)
 1) Uninstall Helm chart: `microk8s helm3 uninstall quiz-app-helm -n quiz-app-helm`

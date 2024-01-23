@@ -7,8 +7,13 @@ spec:
   podSelector:
     matchLabels:
       app: quiz-api
+  policyTypes:
+  - Ingress
   ingress:
   - from:
     - podSelector:
         matchLabels:
           app: quiz-ui
+    - namespaceSelector:
+        matchLabels:
+          namespace: quiz-app
