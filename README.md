@@ -104,3 +104,7 @@ To see the created pods, run `kubectl get pod -n quiz-app`. There should be seve
 13) Push the image to the MicroK8s registry: `sudo docker push localhost:32000/quiz-ui:latest`
 14) Delete the pods in the current deployment with the command `kubectl delete pods --selector=app=quiz-ui --namespace=quiz-app`
 15) Try adding a user to the database ` curl -H 'Content-Type: application/json' -d '{ "username":"john","role":"admin" }' -X POST https://api.quiz-app.com/create-user`
+
+### Certificate not trusted by browser
+Once you open up your browser, Chrome will scream that the url is not safe etc. (quiz-app.com)
+Also the UI won't connect with the api. To fix this, manually insert the link of the api into your browser and hit enter, accept the risks, bla-bla-bla, and then reload the main UI. Reason why this works: https://stackoverflow.com/questions/53642092/angular-https-call-to-self-signed-uri-failing-with-neterr-cert-authority-inva
