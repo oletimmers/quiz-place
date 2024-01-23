@@ -58,7 +58,7 @@ In order to examine the resources created by cert-manager, you can run `kubectl 
 
 6) Build the Docker Image for the backend by navigating to the `backend` folder and running `sudo docker build .`
 7) Check the newly built image using `sudo docker images` and use the image-id to tag the image with the correct IP address: 
-`sudo docker tag <image-id> localgohost:32000/quiz-app:latest`.
+`sudo docker tag <image-id> localhost:32000/quiz-app:latest`.
 8) Push the image to the MicroK8s registry: `sudo docker push localhost:32000/quiz-app:latest`
 9) Apply the YAML files by running the following commands:
 
