@@ -103,3 +103,4 @@ To see the created pods, run `kubectl get pod -n quiz-app`. There should be seve
 12) Make sure to tag the image with the appropriate IP address: `sudo docker tag quiz-ui:latest localhost:32000/quiz-ui:latest`.
 13) Push the image to the MicroK8s registry: `sudo docker push localhost:32000/quiz-ui:latest`
 14) Delete the pods in the current deployment with the command `kubectl delete pods --selector=app=quiz-ui --namespace=quiz-app`
+15) Try adding a user to the database ` curl -H 'Content-Type: application/json' -d '{ "username":"john","role":"admin" }' -X POST https://api.quiz-app.com/create-user`
