@@ -107,4 +107,4 @@ To see the created pods, run `kubectl get pod -n quiz-app`. There should be seve
 
 ### Certificate not trusted by browser
 Once you open up your browser, Chrome will scream that the url is not safe etc. (quiz-app.com)
-Also the UI won't connect with the api. To fix this, manually insert the link of the api into your browser and hit enter, accept the risks, bla-bla-bla, and then reload the main UI. Reason why this works: https://stackoverflow.com/questions/53642092/angular-https-call-to-self-signed-uri-failing-with-neterr-cert-authority-inva
+Also the UI won't connect with the api. To fix this, manually insert the link of the api into your browser and hit enter, accept the risks, bla-bla-bla, and then reload the main UI. Reason why this works: https://stackoverflow.com/a/53642393
