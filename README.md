@@ -66,11 +66,12 @@ In order to examine the resources created by cert-manager, you can run `kubectl 
     # Define the namespace for the project
     kubectl apply -f quiz-app-namespace.yaml
     # Apply the YAML files inside backend_deployment
-    cd backend/backend_deployment
+    cd backend/backend_deployment/certificate
     kubectl apply -f selfsigned-issuer.yaml
     kubectl apply -f self-signed-cluster-issuer.yaml
     kubectl apply -f root-ca.yaml
     kubectl apply -f ca-issuer.yaml
+    # cd ..
     kubectl apply -f api-service.yaml
     kubectl apply -f api-ingress.yaml
     kubectl apply -f api-deployment.yaml
