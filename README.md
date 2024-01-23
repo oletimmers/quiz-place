@@ -71,7 +71,8 @@ In order to examine the resources created by cert-manager, you can run `kubectl 
     kubectl apply -f self-signed-cluster-issuer.yaml
     kubectl apply -f root-ca.yaml
     kubectl apply -f ca-issuer.yaml
-    # cd ..
+    # to backend_deployment folder
+    cd .. 
     kubectl apply -f api-service.yaml
     kubectl apply -f api-ingress.yaml
     kubectl apply -f api-deployment.yaml
