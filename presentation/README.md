@@ -20,7 +20,7 @@
 2) Show storage class: `kubectl get sc`
 3) Show registry: `microk8s ctr images ls | grep localhost`
 4) Use these commands to verify TLS connectivity for the UI and the API:
-    * `openssl s_client -showcerts -connect quiz-app.com:443`
+    * `openssl s_client -showcerts -connect quiz-app.com:443` TODO: change these to the Helm URLs after verifying Helm certificates work
     * `openssl s_client -showcerts -connect api.quiz-app.com:443`
 5) `microk8s status` and show the plugins such as MetalLB and Helm3 etc.
 6) TODO roles
