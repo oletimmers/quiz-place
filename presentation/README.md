@@ -12,6 +12,7 @@
 2) Show the TLS secret by issuing the command `kubectl get secrets` and then `kubectl describe secret my-tls-secret`
 3) Show the contents of the `backend/postgres` folder containing the yaml files for the deployment of the database.
 4) Show the contents of the `frontend/frontend_deployment` folder that contains the frontend deployment yaml files.
+5) Show how those files were carried over to Helm and that Helm is used for deployment.
 
 ## Pre-requisites
 > Show how you configured the pre-requisites for the application (Load Balancer - 1 point, Storage Class - 1 point, image Registry - 1 point, certificates - 1 point, roles - 1 point, network policies - 1 point).
