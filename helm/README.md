@@ -1,5 +1,10 @@
 # HELM SETUP
 
+In order to have the roll-based access control, ensure that you first run the following command:
+```sh
+microk8s enable rbac
+```
+
 ## Directions (inside the helm directory)
 1. Create the namespace: `kubectl create namespace quiz-app-helm`
 2. Create DB path: `sudo mkdir -p /opt/postgres/helm-data`

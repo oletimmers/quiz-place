@@ -1,3 +1,6 @@
+namespaces:
+  app: "quiz-app-helm"
+
 #####################
 # Quiz DB
 #####################
