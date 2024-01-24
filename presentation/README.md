@@ -57,6 +57,7 @@
         * Enter the pod: `kubectl exec -it name_of_pod -n quiz-app-helm -- /bin/sh`
         * Issue command `curl -L google.com` and view that it is not succesful
         * Delete the pod: `kubectl delete pod name_of_pod -n quiz-app-helm`
+8) Finally, show here that the application can make one `GET` request (such as getting the courses) and one `POST` request (creating course/question/answer)
         
 ## Container build and first deployment, scaling, uninstallation
 > Show how you build the container images and publish to a registry (1 point).
