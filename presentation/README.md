@@ -34,7 +34,7 @@
         * Try the previous command again: `telnet quiz-db-service 5432`
         * Observe that the connection is successful
 
-    2. UI egress is only allowed to the API, and it is prevented for other hosts.
+    2. UI egress is only allowed to the API, and it is prevented for other hosts. UI can only make calls to our API.
         * Create a pod like so: `kubectl run test-$RANDOM --image=curlimages/curl:latest --namespace=quiz-app-helm -- sleep infinity`
         * Note the name of the pod that is created (the name looks like `test-someNumber`)
         * Enter the pod: `kubectl exec -it name_of_pod -n quiz-app-helm -- /bin/sh`
@@ -48,6 +48,15 @@
         * Delete the pod: `kubectl delete pod name_of_pod -n quiz-app-helm`
 
         * Finally show that the webpage is running without any problem on the browser, showing that the API can be reached from the UI.
+    
+    3. API egress is completely blocked, API shouldn't make any calls to external sources.
+        * We saw in the previous network policy that a pod that is in the correct namespace but doesn't have any labels can succesfully curl to google.com
+
+        * Now create a pod with the label `quiz-api`: `kubectl run test-$RANDOM --image=curlimages/curl:latest --namespace=quiz-app-helm --labels=app=quiz-api -- sleep infinity`
+        * Note the name of the pod that is created (the name looks like `test-someNumber`)
+        * Enter the pod: `kubectl exec -it name_of_pod -n quiz-app-helm -- /bin/sh`
+        * Issue command `curl -L google.com` and view that it is not succesful
+        * Delete the pod: `kubectl delete pod name_of_pod -n quiz-app-helm`
         
 ## Container build and first deployment, scaling, uninstallation
 > Show how you build the container images and publish to a registry (1 point).

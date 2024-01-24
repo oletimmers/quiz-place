@@ -28,4 +28,8 @@ spec:
                   number: {{ .backend.servicePort }}
         {{- end }}
   {{- end }}
+  tls:
+  - hosts:
+    - {{ .Values.genericApp.ingress.tls.hosts }}
+    secretName: {{ .Values.genericApp.ingress.tls.secretName }}
 {{- end }}

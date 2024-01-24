@@ -1,0 +1,12 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: quiz-app
+  name: api-egress-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: quiz-api
+  policyTypes:
+  - Egress
+  egress: []

@@ -73,6 +73,10 @@ quizAPI:
           value: "true"
         - key: nginx.ingress.kubernetes.io/cors-allow-headers
           value: "DNT,X-CustomHeader,X-LANG,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-Api-Key,X-Device-Id,Access-Control-Allow-Origin, Authorization, X-Access-Tokens"
+        - key: cert-manager.io/issuer
+          value: my-ca-issuer
+        - key: cert-manager.io/common-name
+          value: quiz-app-helm.com
       hosts:
         - host: api.quiz-app-helm.com
           paths: 
@@ -81,6 +85,13 @@ quizAPI:
               backend:
                 serviceName: quiz-api-service
                 servicePort: 8080
+      tls:
+        hosts: api.quiz-app-helm.com
+        secretName: myingress-cert
+      
+    networkpolicy:
+      namespace: quiz-app-helm
+      name: api-egress-policy
 
 #####################
 # Quiz UI
@@ -98,6 +109,11 @@ quizUI:
     
     ingress:
       name: quiz-ui
+      annotations:
+        - key: cert-manager.io/issuer
+          value: my-ca-issuer
+        - key: cert-manager.io/common-name
+          value: quiz-app-helm.com
       hosts:
         - host: quiz-app-helm.com
           paths: 
@@ -106,6 +122,9 @@ quizUI:
               backend:
                 serviceName: quiz-ui-service
                 servicePort: 8080
+      tls:
+        hosts: quiz-app-helm.com
+        secretName: myingress-cert
     
     networkpolicy:
       namespace: quiz-app-helm
