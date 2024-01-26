@@ -30,7 +30,7 @@ metadata:
 subjects:
   - kind: User
     name: adrian
-    namespace: demo
+    namespace: {{ .Values.namespaces.app }}
 roleRef:
   kind: Role
   name: admin
@@ -44,7 +44,7 @@ metadata:
 subjects:
   - kind: User
     name: veronica
-    namespace: demo
+    namespace: {{ .Values.namespaces.app }}
 roleRef:
   kind: Role
   name: visitor
