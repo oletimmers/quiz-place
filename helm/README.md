@@ -1,9 +1,30 @@
 # HELM SETUP
 
-In order to have the roll-based access control, ensure that you first run the following command:
-```sh
-microk8s enable rbac
-```
+## Role-Based Access Control
+
+1) Add the users "adrian" and "veronica" to the Static Token File:
+   - Generate a random token for both users using `openssl rand -base64 48`
+   - `sudo nano /var/snap/microk8s/current/credentials/known_tokens.csv` to open the Static Token File and add a line for each user.
+     The line should look like: 9ZGIaSx/bizd+YUxkFSvvU5GYfVDiWidQhCRTsac8LTee92TikbKW5MkWc+yrMHI,adrian,adrianid
+   - Save the file and stop and start microk8s (i.e. `microk8s stop`, followed by `microk8s start`).
+2) Ensure that RBAC is enabled using `microk8s status` (if not, run `microk8s enable rbac`).
+3) Install or upgrade the Helm charts using the steps in the sections below.
+
+### How to test RBAC
+
+Once the application is up and running, it is possible to check the access control in two ways:
+1) *Check the user permissions:*
+   Issue the command `microk8s kubectl auth can-i list pod --namespace quiz-app-helm --as adrian` to check whether "adrian"
+   is authorised to list the pods. Similarly, you can check "veronica" or an unknown user (e.g. "ursula").
+2) *Test the permissions with the REST API*:
+    - Run `microk8s kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range.clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
+ Cluster nameServer` to get the cluster name (e.g. "microk8s-cluster")
+    - `export CLUSTER_NAME="<cluster-name>"` (e.g. `export CLUSTER_NAME="microk8s-cluster"`)
+    - `APISERVER=$(microk8s kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}")`
+    - List the pods using `microk8s kubectl get pods -n quiz-app-helm`.
+    - To test whether adrian has the permissions to get a pod, issue the following command: 
+      `curl -X GET $APISERVER/api/v1/namespaces/quiz-app-helm/pods/<pod-name> --header "Authorization Bearer <bearer-token>" --insecure`
+      (replace <pod-name> with the desired pod you want to see and use the <bearer-token> of the user you want to see the permissions for).
 
 ## Directions (inside the helm directory)
 1. Create the namespace: `kubectl create namespace quiz-app-helm`
@@ -34,3 +55,4 @@ Make sure to add these lines to `/etc/hosts` by issuing `sudo nano /etc/hosts`:
 8) delete existing helm release: `microk8s helm3 delete <release-name> -n quiz-app-helm`
 9) to uninstall helm chart: `microk8s helm3 uninstall quiz-app-helm -n quiz-app-helm`
 10) get deployment: `kubectl get deployment -n quiz-app-helm`
+

@@ -1,6 +1,12 @@
 namespaces:
   app: "quiz-app-helm"
 
+serviceAccount:
+  create: true # Specify whether a Service Account should be created
+  name: "quiz-app" # The name of the Service Account
+  annotations: {}
+
+
 #####################
 # Quiz DB
 #####################
