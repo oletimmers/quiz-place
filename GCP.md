@@ -1,7 +1,7 @@
 # Google Cloud Platform installation
 Steps took to deploy the quiz-place application to the Google Cloud.
 
-## Steps
+## Steps for setting up the initial envrionment
 0a. Google Cloud account at hand and created a project inside the GCP and now opened a shell.
 
 0b. Optional Authorization `gcloud auth list`
@@ -25,4 +25,17 @@ The repo is now cloned to the shell under `~/cloudshell_open/"the repo name with
 1. `mv cloudshell_open/ repos`
 2. `cd repos`
 3. `mv "the repo name with username"/ quiz-place`
+### Repositoriy setup for the images
+https://cloud.google.com/artifact-registry/docs/repositories/create-repos
+1. `gcloud services enable artifactregistry.googleapis.com`
+2. Go to `https://console.cloud.google.com/artifacts`
+3. Press the plus button.
+4. Details:
+    1. Name: `quiz-place-repository`
+    2. Format: Docker
+    3. Mode: Standard
+    4. Region: europe-west4
+    5. Encryption and Cleanup: Google-managed and default.
+5. Hit this in the shell: `gcloud auth configure-docker europe-west4-docker.pkg.dev`
 
+## Building images
