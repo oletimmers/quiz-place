@@ -49,7 +49,7 @@
 
         * Finally show that the webpage is running without any problem on the browser, showing that the API can be reached from the UI.
     
-    3. API egress is completely blocked, API shouldn't make any calls to external sources.
+    3. API egress is only allowed to the database and the API itself, also to kube-system namespace.
         * We saw in the previous network policy that a pod that is in the correct namespace but doesn't have any labels can succesfully curl to google.com
 
         * Now create a pod with the label `quiz-api`: `kubectl run test-$RANDOM --image=curlimages/curl:latest --namespace=quiz-app-helm --labels=app=quiz-api -- sleep infinity`
