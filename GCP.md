@@ -39,3 +39,10 @@ https://cloud.google.com/artifact-registry/docs/repositories/create-repos
 5. Hit this in the shell: `gcloud auth configure-docker europe-west4-docker.pkg.dev`
 
 ## Building images
+Image name format:
+
+`LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE`
+
+In my case:
+
+`europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/IMAGE`
