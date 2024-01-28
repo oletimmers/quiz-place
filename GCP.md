@@ -47,14 +47,13 @@ Do this manually or via the links:
 
 ### Build the image:
 Fromout the repo main folder:
-    ``` shell
+
     cd backend
     sudo docker build -t quiz-app:v6 .
     cd ../frontend
     sudo docker build -t quiz-ui:v8 .
     # to verify:
     docker images
-    ```
 
 
 ### Tagging the images
