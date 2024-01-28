@@ -39,10 +39,35 @@ https://cloud.google.com/artifact-registry/docs/repositories/create-repos
 5. Hit this in the shell: `gcloud auth configure-docker europe-west4-docker.pkg.dev`
 
 ## Building images
+### Find out versions of the apps in the helm charts:
+Do this manually or via the links:
+- [Backend, v6 currently](https://github.com/oletimmers/quiz-place/blob/master/helm/quiz-app-chart/charts/quizAPI/Chart.yaml)
+- [Frontend, v8 currently](https://github.com/oletimmers/quiz-place/blob/master/helm/quiz-app-chart/charts/quizUI/Chart.yaml)
+
+
+### Build the image:
+Fromout the repo main folder:
+    ``` shell
+    cd backend
+    sudo docker build -t quiz-app:v6 .
+    cd ../frontend
+    sudo docker build -t quiz-ui:v8 .
+    # to verify:
+    docker images
+    ```
+
+
+### Tagging the images
 Image name format:
 
 `LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE`
 
-In my case:
+In our case:
 
-`europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/IMAGE`
+`europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/IMAGE-NAME`
+
+Tagging the docker images:
+- Default format: `docker tag SOURCE-IMAGE LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE:TAG`
+- In our case: `docker tag SOURCE-IMAGE europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/IMAGE-NAME:vX`
+- So for the backend: ``
+- And for the frontend: ``
