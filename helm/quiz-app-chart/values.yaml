@@ -94,6 +94,9 @@ quizAPI:
     networkpolicy:
       namespace: quiz-app-helm
       name: api-egress-policy
+      selectedPodApp1: quiz-db
+      selectedPodApp2: quiz-api
+      namespaceSelector: kube-system
 
 #####################
 # Quiz UI

@@ -10,5 +10,15 @@ spec:
       app: {{ .Values.genericApp.name }}
   policyTypes:
   - Egress
-  egress: []
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: {{ .Values.genericApp.networkpolicy.selectedPodApp1 }}
+    - podSelector:
+        matchLabels:
+          app: {{ .Values.genericApp.networkpolicy.selectedPodApp2 }}
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ .Values.genericApp.networkpolicy.namespaceSelector }}
 {{- end }}

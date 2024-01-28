@@ -9,4 +9,14 @@ spec:
       app: quiz-api
   policyTypes:
   - Egress
-  egress: []
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: postgres
+    - podSelector:
+        matchLabels:
+          app: quiz-api
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
