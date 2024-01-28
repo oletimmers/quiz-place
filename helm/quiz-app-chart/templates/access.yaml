@@ -14,6 +14,27 @@ rules:
 
 ---
 
+# Network developer
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: role:network-dev
+  namespace: {{ .Values.namespaces.app | quote }}
+  labels:
+    app: quiz-app
+    module: access-control
+rules:
+  # The network developer can only make changes to the network related resources
+  # While being able to see the pods, pod logs and deployment of the core API group
+  - apiGroups: ["", "cert-manager.io", "networking.k8s.io"]
+    resources: ["services", "nodeport", "loadbalancer", "ingress", "networkpolicy", "cert-manager", "certificates", "clusterip"]
+    verbs: ["get", "list", "watch", "create", "update", "delete", "patch"]
+  - apiGroups: [""]
+    resources: ["pods", "pod/logs", "deployment"]
+    verbs: ["get", "list", "watch"]
+
+---
+
 # Visitor role that is only allowed to see but not change
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
@@ -46,6 +67,26 @@ subjects:
 roleRef:
   kind: Role
   name: role:admin
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+# Set "Nathan" as an Network Developer
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rolebinding:network-dev
+  namespace: {{ .Values.namespaces.app | quote }}
+  labels:
+    app: quiz-app
+    module: access-control
+subjects:
+  - kind: User
+    name: nathan
+    namespace: {{ .Values.namespaces.app | quote }}
+roleRef:
+  kind: Role
+  name: role:network-dev
   apiGroup: rbac.authorization.k8s.io
 
 ---
