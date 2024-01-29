@@ -74,3 +74,5 @@ Tagging the docker images:
 ### Pushing the images:
 - Backend: `docker push europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/quiz-app:v6`
 - Frontend: `docker push europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/quiz-ui:v8`
+
+## Deployment via kubernetes
