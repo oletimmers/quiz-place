@@ -8,9 +8,9 @@ metadata:
     app: quiz-app
     module: access-control
 rules:
-  - apiGroups: ["", "cert-manager.io", "networking.k8s.io"]
-    resources: ["*"]
-    verbs: ["*"]
+- apiGroups: ["", "cert-manager.io", "networking.k8s.io"]
+  resources: ["*"]
+  verbs: ["*"]
 
 ---
 
@@ -24,14 +24,14 @@ metadata:
     app: quiz-app
     module: access-control
 rules:
-  # The network developer can only make changes to the network related resources
-  # While being able to see the pods, pod logs and deployment of the core API group
-  - apiGroups: ["", "cert-manager.io", "networking.k8s.io"]
-    resources: ["services", "nodeport", "loadbalancer", "ingress", "networkpolicy", "cert-manager", "certificates", "clusterip"]
-    verbs: ["get", "list", "watch", "create", "update", "delete", "patch"]
-  - apiGroups: [""]
-    resources: ["pods", "pod/logs", "deployment"]
-    verbs: ["get", "list", "watch"]
+# The network developer can only make changes to the network related resources
+# While being able to see the pods, pod logs and deployment of the core API group
+- apiGroups: ["", "cert-manager.io", "networking.k8s.io"]
+  resources: ["services", "ingresses", "networkpolicies", "certificates", "cert-manager", "nodeports", "endpoints"]
+  verbs: ["get", "list", "watch", "create", "update", "delete", "patch"]
+- apiGroups: [""]
+  resources: ["pods", "pod/logs", "deployment"]
+  verbs: ["get", "list", "watch"]
 
 ---
 
@@ -45,9 +45,9 @@ metadata:
     app: quiz-app
     module: access-control
 rules:
-  - apiGroups: ["", "networking.k8s.io"]
-    resources: ["pods", "pods/logs", "services"]
-    verbs: ["get", "list", "watch"]
+- apiGroups: ["", "networking.k8s.io"]
+  resources: ["pods", "pods/logs", "services"]
+  verbs: ["get", "list", "watch"]
 
 ---
 
@@ -61,9 +61,9 @@ metadata:
     app: quiz-app
     module: access-control
 subjects:
-  - kind: User
-    name: adrian
-    namespace: {{ .Values.namespaces.app | quote }}
+- kind: User
+  name: adrian
+  namespace: {{ .Values.namespaces.app | quote }}
 roleRef:
   kind: Role
   name: role:admin
@@ -71,7 +71,7 @@ roleRef:
 
 ---
 
-# Set "Nathan" as an Network Developer
+# Set "nathan" as a Network Developer
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -81,9 +81,9 @@ metadata:
     app: quiz-app
     module: access-control
 subjects:
-  - kind: User
-    name: nathan
-    namespace: {{ .Values.namespaces.app | quote }}
+- kind: User
+  name: nathan
+  namespace: {{ .Values.namespaces.app | quote }}
 roleRef:
   kind: Role
   name: role:network-dev
@@ -101,9 +101,9 @@ metadata:
     app: quiz-app
     module: access-control
 subjects:
-  - kind: User
-    name: veronica
-    namespace: {{ .Values.namespaces.app | quote }}
+- kind: User
+  name: veronica
+  namespace: {{ .Values.namespaces.app | quote }}
 roleRef:
   kind: Role
   name: role:visitor
