@@ -1,0 +1,2 @@
+{{- tpl (.Files.Get "../../templates/access.yaml") . | nindent 4 }}
+
