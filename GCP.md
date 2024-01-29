@@ -68,5 +68,5 @@ In our case:
 Tagging the docker images:
 - Default format: `docker tag SOURCE-IMAGE LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE:TAG`
 - In our case: `docker tag SOURCE-IMAGE europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/IMAGE-NAME:vX`
-- So for the backend: ``
-- And for the frontend: ``
+- So for the backend: `docker tag quiz-app:v6 europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/quiz-app:v6`
+- And for the frontend: `docker tag quiz-ui:v8 europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/quiz-ui:v8`
