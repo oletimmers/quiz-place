@@ -34,6 +34,7 @@ Ensure that you have opened Docker Desktop before continuing.
 
 </details>
 
+### TLS/HTTPS/Domains
 In order to access the web application, you should first add `<IP address> api.quiz-app.com` and `<IP address> quiz-app.com`
 to `/etc/hosts` (e.g. `127.0.0.1 app.quiz-app.com` for Linux users).
 
@@ -55,6 +56,8 @@ To get the ingress pod name, run `microk8s kubectl get pods -n ingress` and to v
 
 In order to examine the resources created by cert-manager, you can run `kubectl get all -n cert-manager` and 
 `kubectl get apiservice`.
+
+### Building the images and deploying to kubernetes
 
 6) Build the Docker Image for the backend by navigating to the `backend` folder and running `sudo docker build .`
 7) Check the newly built image using `sudo docker images` and use the image-id to tag the image with the correct IP address: 
