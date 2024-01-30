@@ -23,7 +23,66 @@
     * `openssl s_client -showcerts -connect quiz-app-helm.com:443`
     * `openssl s_client -showcerts -connect api.quiz-app-helm.com:443`
 5) `microk8s status` and show the plugins such as MetalLB and Helm3 etc.
-6) TODO roles
+6) Role Based Access Control:
+   * Check the role permissions for the admin "adrian", network-dev "nathan" and visitor "veronica":
+      ```bash
+      # Check Pod access permissions
+      microk8s kubectl auth can-i list pod --namespace quiz-app-helm --as adrian
+      microk8s kubectl auth can-i list pod --namespace quiz-app-helm --as nathan
+      microk8s kubectl auth can-i list pod --namespace quiz-app-helm --as veronica
+      # Check Pod modification permissions
+      microk8s kubectl auth can-i delete pod --namespace quiz-app-helm --as adrian
+      microk8s kubectl auth can-i delete pod --namespace quiz-app-helm --as nathan
+      microk8s kubectl auth can-i delete pod --namespace quiz-app-helm --as veronica
+      # Check Networkpolicies access permissions
+      microk8s kubectl auth can-i get networkpolicies --namespace quiz-app-helm --as adrian
+      microk8s kubectl auth can-i get networkpolicies --namespace quiz-app-helm --as nathan
+      microk8s kubectl auth can-i get networkpolicies --namespace quiz-app-helm --as veronica
+      # Check Networkpolicies modification permissions
+      microk8s kubectl auth can-i create networkpolicies --namespace quiz-app-helm --as adrian
+      microk8s kubectl auth can-i create networkpolicies --namespace quiz-app-helm --as nathan
+      microk8s kubectl auth can-i create networkpolicies --namespace quiz-app-helm --as veronica
+      ```
+   * Test the role permissions (update the Bearer tokens based on the tokens assigned to the users in the Static Token File):
+     * Set the necessary environmental variables
+       ```bash
+       export CLUSTER_NAME="microk8s-cluster"
+       APISERVER=$(microk8s kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}")
+       export POD="quiz-ui-deployment-869d659ff7-7bhd9"
+       ```
+     * Test Pod and Networking access Nathan
+       ```bash
+       export BEARER_TOKEN="RPzU2sXP2xdwGeGWcFkTmIGZtPDrzPNSlIX+X3Z11I2FYUTXNxPUKxdTDCEknwso"
+       curl -X GET $APISERVER/api/v1/namespaces/quiz-app-helm/pods --header "Authorization: Bearer $BEARER_TOKEN" --insecure
+       ```
+       ```bash
+       curl -X DELETE $APISERVER/api/v1/namespaces/quiz-app-helm/pods --header "Authorization: Bearer $BEARER_TOKEN" --insecure
+       ```
+       ```bash
+       curl -X GET $APISERVER/apis/networking.k8s.io/v1/namespaces/quiz-app-helm/networkpolicies --header "Authorization: Bearer $BEARER_TOKEN" --insecure 
+       ```
+     * Test Pod and Networking access Veronica
+       ```bash
+       export BEARER_TOKEN="9plbeR0CwCFku7YOdSidqy9rRqvId3NWLDfyeORdneEbzns5vP1p5/gCTT/T1t28"
+       curl -X GET $APISERVER/api/v1/namespaces/quiz-app-helm/pods --header "Authorization: Bearer $BEARER_TOKEN" --insecure
+       ```
+       ```bash
+       curl -X DELETE $APISERVER/api/v1/namespaces/quiz-app-helm/pods --header "Authorization: Bearer $BEARER_TOKEN" --insecure
+       ```
+       ```bash
+       curl -X GET $APISERVER/apis/networking.k8s.io/v1/namespaces/quiz-app-helm/networkpolicies --header "Authorization: Bearer $BEARER_TOKEN" --insecure 
+       ```
+     * Test Pod and Networking access Adrian
+       ```bash
+       export BEARER_TOKEN="9ZGIaSx/bizd+YUxkFSvvU5GYfVDiWidQhCRTsac8LTee92TikbKW5MkWc+yrMHI"
+       curl -X GET $APISERVER/api/v1/namespaces/quiz-app-helm/pods --header "Authorization: Bearer $BEARER_TOKEN" --insecure
+       ```
+       ```bash
+       curl -X DELETE $APISERVER/api/v1/namespaces/quiz-app-helm/pods --header "Authorization: Bearer $BEARER_TOKEN" --insecure
+       ```
+       ```bash
+       curl -X GET $APISERVER/apis/networking.k8s.io/v1/namespaces/quiz-app-helm/networkpolicies --header "Authorization: Bearer $BEARER_TOKEN" --insecure 
+       ```
 7) Network Policies:
     1. Database can only be accessed by the API (deny database access to pods that don't have the label `app = quiz-api`):
         * Create a pod that doesn't have the label `app = quiz-api`: `kubectl run test-$RANDOM --namespace=quiz-app-helm --rm -i -t --image=busybox -- sh`
