@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quiz-api-deployment
+  namespace: quiz-app
+  labels:
+    app: quiz-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: quiz-api
+  template:
+    metadata:
+      namespace: quiz-app
+      labels:
+        app: quiz-api
+    spec:
+      containers:
+      - name: quiz-api-container
+        image: europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/quiz-app:v6
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        env:
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_DB
+            value: postgres
+          - name: POSTGRES_HOST
+            value: postgres-service
+          - name: POSTGRES_PORT
+            value: '5432'
+          - name: POSTGRES_USER
+            value: postgres
