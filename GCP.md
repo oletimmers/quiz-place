@@ -75,4 +75,8 @@ Tagging the docker images:
 - Backend: `docker push europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/quiz-app:v6`
 - Frontend: `docker push europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/quiz-ui:v8`
 
+## Creating storage
+`gcloud compute disks create --size=10GB --zone=europe-west4-a gce-nfs-disk`
+
+
 ## Deployment via kubernetes
