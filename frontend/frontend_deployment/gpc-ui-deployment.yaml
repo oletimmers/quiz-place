@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quiz-ui-deployment
+  namespace: quiz-app
+  labels:
+    app: quiz-ui
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: quiz-ui
+  template:
+    metadata:
+      labels:
+        app: quiz-ui
+    spec:
+      containers:
+      - name: quiz-ui-container
+        image: europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/quiz-ui:v9
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
