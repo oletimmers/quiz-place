@@ -114,7 +114,7 @@ Check the `backend/backend_deployment/gpc-api-deployment.yaml` and `frontend/fro
     kubectl apply -f ui-service.yaml
 ```
 ### Connecting the UI to the API
-You might now notice that everything deployes. However, the URL of the API inside the UI-environment is not set right yet.
+You might now notice that everything deploys. However, the URL of the API inside the UI-environment is not set right yet.
 Do this by:
 1. Going to the Kubernetes Engine inside the Google Cloud UI.
 2. => Workloads => quiz-api-deployment workload
