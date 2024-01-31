@@ -12,6 +12,8 @@ Might come handy: `cloudshell edit filename` to edit a local file on the shell.
 1. `gcloud config set compute/region "europe-west4"`
 2. `gcloud config set compute/zone "europe-west4-a"`
 3. `gcloud container clusters create --machine-type=e2-medium --zone=europe-west4-a quiz-place-cluster`
+
+Notice: we're using "europe-west4-a" as zone.
 ### Authenticate (optional)
 1. Get authentication for the cluster: `gcloud container clusters get-credentials quiz-place-cluster --zone europe-west4-a`
 ### Retrieving repo locally
