@@ -6,6 +6,8 @@ Steps took to deploy the quiz-place application to the Google Cloud.
 
 0b. Optional Authorization `gcloud auth list`
 
+Might come handy: `cloudshell edit filename` to edit a local file on the shell. 
+
 ### Initial step: Setting zone and creating cluster
 1. `gcloud config set compute/region "europe-west4"`
 2. `gcloud config set compute/zone "europe-west4-a"`
@@ -117,4 +119,9 @@ Do this by:
 1. Going to the Kubernetes Engine inside the Google Cloud UI.
 2. => Workloads => quiz-api-deployment workload
 3. Next quiz-api-service in the exposing services area there is the exposed IP for the API. Copy this IP.
-4. 
+4. Set this IP in the `frontend/src/environments/environment.ts` and `~/environment.prod.ts`.
+5. Build the UI-image again.
+6. Tag it with a new version nummer on the end.
+7. Push the new image.
+8. Equal the imagetag in the `gpc-ui-deployment.yaml`.
+9. `kubectl apply -f gpc-ui-deployment.yaml`
