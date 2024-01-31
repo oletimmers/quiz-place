@@ -48,13 +48,14 @@ Do this manually or via the links:
 ### Build the image:
 Fromout the repo main folder:
 
+```shell
     cd backend
     sudo docker build -t quiz-app:v6 .
     cd ../frontend
     sudo docker build -t quiz-ui:v8 .
     # to verify:
     docker images
-
+```
 
 ### Tagging the images
 Image name format:
@@ -81,7 +82,7 @@ Tagging the docker images:
 ## Deployment via kubernetes
 Check the `backend/backend_deployment/gpc-api-deployment.yaml` and `frontend/frontend_deployment/gpc-ui-deployment.yaml` whether they have the right images.
 
-    ```shell
+```shell
     # Define the namespace for the project
     kubectl apply -f quiz-app-namespace.yaml
     # Apply the YAML files inside backend_deployment
@@ -109,5 +110,11 @@ Check the `backend/backend_deployment/gpc-api-deployment.yaml` and `frontend/fro
     kubectl apply -f gpc-ui-deployment.yaml
     kubectl apply -f ui-ingress.yaml
     kubectl apply -f ui-service.yaml
-    ```
+```
 ### Connecting the UI to the API
+You might now notice that everything deployes. However, the URL of the API inside the UI-environment is not set right yet.
+Do this by:
+1. Going to the Kubernetes Engine inside the Google Cloud UI.
+2. => Workloads => quiz-api-deployment workload
+3. Next quiz-api-service in the exposing services area there is the exposed IP for the API. Copy this IP.
+4. 
