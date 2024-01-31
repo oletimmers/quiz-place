@@ -38,7 +38,7 @@ https://cloud.google.com/artifact-registry/docs/repositories/create-repos
     5. Encryption and Cleanup: Google-managed and default.
 5. Hit this in the shell: `gcloud auth configure-docker europe-west4-docker.pkg.dev`
 
-## Building images
+## Building and pushing images
 ### Find out versions of the apps in the helm charts:
 Do this manually or via the links:
 - [Backend, v6 currently](https://github.com/oletimmers/quiz-place/blob/master/helm/quiz-app-chart/charts/quizAPI/Chart.yaml)
@@ -78,5 +78,36 @@ Tagging the docker images:
 ## Creating storage
 `gcloud compute disks create --size=10GB --zone=europe-west4-a gce-nfs-disk`
 
-
 ## Deployment via kubernetes
+Check the `backend/backend_deployment/gpc-api-deployment.yaml` and `frontend/frontend_deployment/gpc-ui-deployment.yaml` whether they have the right images.
+
+    ```shell
+    # Define the namespace for the project
+    kubectl apply -f quiz-app-namespace.yaml
+    # Apply the YAML files inside backend_deployment
+    cd backend/backend_deployment/certificate
+    kubectl apply -f selfsigned-issuer.yaml
+    kubectl apply -f self-signed-cluster-issuer.yaml
+    kubectl apply -f root-ca.yaml
+    kubectl apply -f ca-issuer.yaml
+    # to backend_deployment folder
+    cd .. 
+    kubectl apply -f api-service.yaml
+    kubectl apply -f api-ingress.yaml
+    kubectl apply -f gpc-api-deployment.yaml
+    # Apply the YAML files inside postgres
+    cd ../postgres
+    kubectl apply -f nfs-server.yaml
+    kubectl apply -f nfs-service.yaml
+    kubectl apply -f postgres-config.yaml
+    kubectl apply -f gpc-postgres-storage.yaml
+    kubectl apply -f gpc-postgres-deployment.yaml
+    kubectl apply -f postgres-secret.yaml
+    kubectl apply -f postgres-service.yaml
+    # Apply the YAML files inside frontend_deployment (in the frontend folder)
+    cd ../../frontend/frontend_deployment
+    kubectl apply -f gpc-ui-deployment.yaml
+    kubectl apply -f ui-ingress.yaml
+    kubectl apply -f ui-service.yaml
+    ```
+### Connecting the UI to the API
