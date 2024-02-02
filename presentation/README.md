@@ -157,3 +157,8 @@
 > Canary Update
 1) Apply the deployment for canary update: `kubectl -n quiz-app-helm apply -f quiz-ui-canary.yaml`
 2) Show the labels: `kubectl -n quiz-app-helm get pods --show-labels -w`
+
+## GCP
+1) GCP lookaround, what is what
+2) Cluster/ workloads / nodes /pods
+3) Updating application, frontend
