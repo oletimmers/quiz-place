@@ -160,5 +160,8 @@
 
 ## GCP
 1) GCP lookaround, what is what
-2) Cluster/ workloads / nodes /pods
-3) Updating application, frontend
+2) https://console.cloud.google.com/artifacts
+3) NFS
+4) Cluster/ workloads / nodes /pods
+5) Updating application, frontend
+6) 
