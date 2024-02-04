@@ -159,9 +159,13 @@
 2) Show the labels: `kubectl -n quiz-app-helm get pods --show-labels -w`
 
 ## GCP
-1) GCP lookaround, what is what
-2) https://console.cloud.google.com/artifacts
-3) NFS
-4) Cluster/ workloads / nodes /pods
-5) Updating application, frontend
-6) 
+> Lookaround of the GCP Console and setup
+> Rolling update within GCP
+1) Make a change in the UI code.
+2) Build the docker image inside the /frontend directory: `sudo docker build -t quiz-ui:v8 .`
+3) Tag the image: `docker tag quiz-ui:v8 europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/quiz-ui:v8`
+4) Push the image to the registry: `docker push europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/quiz-ui:v8`
+5) Change the Helm `image`-tag in the `frontend/frontend_deployment/gpc-ui-deployment.yaml` to the new version.
+6) Apply the new version of the `gpc-ui-deployment.yaml` file with `kubectl apply -f gpc-ui-deployment.yaml`
+7) Watch the rollout process via GCP Console.
+8) Show the changed UI.
