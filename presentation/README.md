@@ -159,8 +159,8 @@
 2) Show the labels: `kubectl -n quiz-app-helm get pods --show-labels -w`
 
 ## GCP
-> Lookaround of the GCP Console and setup
-> Rolling update within GCP
+* Lookaround of the GCP Console and setup
+* Rolling update within GCP
 1) Make a change in the UI code.
 2) Build the docker image inside the /frontend directory: `sudo docker build -t quiz-ui:v8 .`
 3) Tag the image: `docker tag quiz-ui:v8 europe-west4-docker.pkg.dev/sc-group31/quiz-place-repository/quiz-ui:v8`
